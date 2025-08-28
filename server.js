@@ -154,7 +154,7 @@ RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 
 5. **[Principle]**: [Concise explanation]. In moments like these, we can find great comfort knowing that [Reference] assures us, "[Bible verse]." **Practical Step**: [Specific actionable step you can take today].
 
-[Closing prayer or encouragement about God's love with specific application]"
+[Closing summary paragraph that ties together the main themes and offers final encouragement for moving forward]"
 
 CRITICAL REQUIREMENTS:
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
@@ -164,6 +164,7 @@ CRITICAL REQUIREMENTS:
 - Use transitional phrases like "reminds us", "teaches us", "instructs", "declares", "assures us"
 - Scripture references should flow naturally into the verse quote
 - Make verse introductions conversational and contextual, not generic or repetitive
+- End with a summary paragraph (NOT a prayer) that ties together the principles and encourages action
 
 FORMATTING:
 - Use **bold** for principle titles
