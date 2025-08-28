@@ -73,7 +73,7 @@ fastify.post('/ai/chat', async (request, reply) => {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages,
-        max_tokens: 700, // Increased for longer, more detailed responses
+        max_tokens: 800, // Increased to ensure 5 full principles fit
         temperature: 0.7, // Slightly lower for more focused responses
         top_p: 0.9,
         frequency_penalty: 0.1, // Reduced to allow for more detailed explanations
@@ -141,7 +141,7 @@ TONE: Warm, devotional, encouraging, pastoral
 STYLE: Use "you/we" inclusive language, avoid denominational specifics
 CONTENT: Always include relevant Bible verses with proper references
 
-RESPONSE FORMAT:
+RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 "[Opening encouragement addressing the topic]
 
 1. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
@@ -156,11 +156,12 @@ RESPONSE FORMAT:
 
 [Closing prayer or encouragement about God's love with specific application]"
 
-REQUIREMENTS:
-- Provide 5-7 comprehensive principles with detailed explanations
-- Each principle should include practical application
+CRITICAL REQUIREMENTS:
+- YOU MUST provide exactly 5 numbered principles - no more, no less
+- Do NOT stop at 3 principles - continue to provide all 5
+- Each principle must be substantial with detailed explanations
+- Include practical application for each principle
 - Use rich, devotional language that encourages deeper reflection
-- Ensure each section is substantial and meaningful
 
 FORMATTING:
 - Use **bold** for principle titles
@@ -174,6 +175,8 @@ FORMATTING:
       basePrompt += `\n\nSPECIFIC FOCUS: ${topicGuidance}`;
     }
   }
+
+  basePrompt += `\n\nREMINDER: Your response must contain exactly 5 numbered principles (1, 2, 3, 4, 5) with detailed explanations. Do not stop at 3 principles.`;
 
   return basePrompt;
 }
