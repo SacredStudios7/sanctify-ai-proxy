@@ -234,20 +234,21 @@ Write a conversational prayer with:
 
 THIS IS A PRACTICAL GUIDANCE REQUEST:
 
-YOU MUST COPY THIS EXACT FORMAT. DO NOT DEVIATE:
+YOU MUST COPY THIS EXACT SENTENCE STRUCTURE. NO VARIATIONS ALLOWED:
 
 [Opening sentence]
 
-1. **Title**: Explanation. John 3:16 says, "Quote." Consider taking this step.
-2. **Title**: Explanation. Romans 8:28 says, "Quote." Try implementing this approach.  
-3. **Title**: Explanation. Philippians 4:13 says, "Quote." Practice this daily habit.
-4. **Title**: Explanation. Psalm 23:1 says, "Quote." Begin by doing this action.
-5. **Title**: Explanation. Proverbs 3:5 says, "Quote." Start incorporating this into your routine.
+1. **Title**: Explanation sentence. The Bible says, "Quote here" (John 3:16). Consider taking this step.
+2. **Title**: Explanation sentence. The Bible says, "Quote here" (Romans 8:28). Try implementing this approach.  
+3. **Title**: Explanation sentence. The Bible says, "Quote here" (Philippians 4:13). Practice this daily habit.
+4. **Title**: Explanation sentence. The Bible says, "Quote here" (Psalm 23:1). Begin by doing this action.
+5. **Title**: Explanation sentence. The Bible says, "Quote here" (Proverbs 3:5). Start incorporating this into your routine.
 
-CRITICAL: 
-- Every principle MUST use "Verse says, 'Quote.'" - NO brackets around verse references
-- NO other words like "reminds", "states", "teaches", "instructs". ONLY "says"
-- Vary action words: Consider, Try, Practice, Begin, Start, Focus on, Work on, etc.`;
+CRITICAL SENTENCE ORDER REQUIREMENT:
+- EVERY principle MUST follow: "Explanation. The Bible says, 'Quote' (Verse). Action."
+- NEVER start with verse reference - ALWAYS start with explanation
+- ALWAYS use "The Bible says" - NEVER use verse name first
+- ALWAYS put verse reference in parentheses after the quote`;
   }
 
   return basePrompt;
