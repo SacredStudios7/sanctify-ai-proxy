@@ -73,11 +73,11 @@ fastify.post('/ai/chat', async (request, reply) => {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages,
-        max_tokens: 600, // Keep at 600 for complete responses
-        temperature: 0.8,
+        max_tokens: 700, // Increased for longer, more detailed responses
+        temperature: 0.7, // Slightly lower for more focused responses
         top_p: 0.9,
-        frequency_penalty: 0.2,
-        presence_penalty: 0.1
+        frequency_penalty: 0.1, // Reduced to allow for more detailed explanations
+        presence_penalty: 0.2 // Increased to encourage new topics/principles
       }),
     });
     
@@ -144,13 +144,23 @@ CONTENT: Always include relevant Bible verses with proper references
 RESPONSE FORMAT:
 "[Opening encouragement addressing the topic]
 
-1. **[Principle]**: [Explanation]. "[Bible verse]" ([Reference]).
+1. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
 
-2. **[Principle]**: [Explanation]. "[Bible verse]" ([Reference]).
+2. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
 
-3. **[Principle]**: [Explanation]. "[Bible verse]" ([Reference]).
+3. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
 
-[Closing prayer or encouragement about God's love]"
+4. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+
+5. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+
+[Closing prayer or encouragement about God's love with specific application]"
+
+REQUIREMENTS:
+- Provide 5-7 comprehensive principles with detailed explanations
+- Each principle should include practical application
+- Use rich, devotional language that encourages deeper reflection
+- Ensure each section is substantial and meaningful
 
 FORMATTING:
 - Use **bold** for principle titles
