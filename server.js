@@ -189,7 +189,7 @@ FORMATTING:
   }
 
   if (topic === 'prayer') {
-    basePrompt += `\n\nCRITICAL PRAYER FORMAT REMINDER: This is a PRAYER REQUEST. Do NOT use numbered principles. Use ONLY the prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen."`;
+    basePrompt += `\n\nCRITICAL PRAYER FORMAT REMINDER: This is a PRAYER REQUEST. Do NOT use numbered principles, verse references, or scripture citations. Use ONLY the prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen." Write as a conversational prayer to God, not a teaching format.`;
   } else {
     basePrompt += `\n\nREMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles.`;
   }
@@ -209,7 +209,7 @@ function getTopicGuidance(topic) {
     'relationships': 'Focus on biblical relationships, love, and community. Use 1 Corinthians 13, Ephesians 4:32.',
     'struggles': 'Emphasize God\'s strength in weakness and perseverance. Use 2 Corinthians 12:9, Romans 8:28.',
     'gratitude': 'Focus on thankfulness, praise, and recognizing God\'s blessings. Use 1 Thessalonians 5:18, Psalm 103.',
-    'prayer': 'CRITICAL: This is a PRAYER REQUEST - DO NOT USE NUMBERED PRINCIPLES FORMAT. ONLY use prayer format: [Opening sentence introducing the prayer] + [First prayer paragraph - 3-4 sentences addressing the main request] + [Second prayer paragraph - 3-4 sentences with thanksgiving/blessings] + End with "In Jesus\' name, Amen." NO NUMBERED SECTIONS OR VERSES.'
+    'prayer': 'CRITICAL: This is a PRAYER REQUEST - DO NOT USE NUMBERED PRINCIPLES FORMAT. ONLY use prayer format: [Opening sentence introducing the prayer] + [First prayer paragraph - 3-4 sentences addressing the main request] + [Second prayer paragraph - 3-4 sentences with thanksgiving/blessings] + End with "In Jesus\' name, Amen." NO NUMBERED SECTIONS, NO VERSE REFERENCES, NO SCRIPTURE CITATIONS.'
   };
   
   return topicMap[topic] || '';
@@ -217,16 +217,15 @@ function getTopicGuidance(topic) {
 
 // Parse AI response for structured content
 function parseAIResponse(content) {
-  // Extract verse references
-  const verseMatches = content.match(/\([^)]*\d+:\d+[^)]*\)/g) || [];
+  // Extract verse references - updated to match new format without parentheses
+  const verseMatches = content.match(/(?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Psalms|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)\s+\d+:\d+(?:-\d+)?/g) || [];
   const verseReferences = verseMatches.map(match => {
-    const cleaned = match.replace(/[()]/g, '');
-    const parts = cleaned.split(/\s+/);
+    const parts = match.split(/\s+/);
     if (parts.length >= 2) {
       const verseRef = parts[parts.length - 1];
       const book = parts.slice(0, -1).join(' ');
       if (verseRef.includes(':')) {
-        return { book, reference: verseRef, fullReference: cleaned };
+        return { book, reference: verseRef, fullReference: match };
       }
     }
     return null;
