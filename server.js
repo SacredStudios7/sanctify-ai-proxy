@@ -59,14 +59,27 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     // Build optimized message context - keep minimal for speed and format consistency
     // Use only the last message to prevent format degradation over time
-    const recentHistory = (conversationHistory || []).slice(-1);
+    let recentHistory = (conversationHistory || []).slice(-1);
+    
+    // Detect format switching and clear history to prevent confusion
+    const lastMessage = recentHistory[0];
+    const isPreviousFormatDifferent = lastMessage && (
+      (isPrayerRequest && !lastMessage.content?.includes('In Jesus\' name')) ||
+      (!isPrayerRequest && lastMessage.content?.includes('In Jesus\' name'))
+    );
+    
+    // Clear history when switching between prayer and practical formats
+    if (isPreviousFormatDifferent) {
+      recentHistory = [];
+      fastify.log.info('🔄 Format switch detected - clearing conversation history');
+    }
     
     // Detect long conversations and provide stronger format reinforcement
     const conversationLength = (conversationHistory || []).length;
     const isLongConversation = conversationLength > 6;
     
     // Build spiritual guidance system prompt
-    const systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation);
+    const systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation, isPreviousFormatDifferent);
     
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -146,7 +159,7 @@ fastify.post('/ai/chat', async (request, reply) => {
 });
 
 // Build spiritual guidance system prompt
-function buildSpiritualPrompt(topic, isLongConversation = false) {
+function buildSpiritualPrompt(topic, isLongConversation = false, isFormatSwitch = false) {
   let basePrompt = `You are a Christian devotional guide for the Sanctify app. Provide warm, encouraging, and pastoral spiritual guidance grounded in Scripture.
 
 TONE: Warm, devotional, encouraging, pastoral
@@ -199,9 +212,13 @@ FORMATTING:
     basePrompt += `\n\nCRITICAL FORMAT REMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles. Each principle must follow the exact format specified above. IGNORE any inconsistent formatting from previous messages in this conversation.`;
   }
   
-  // Add extra format enforcement for long conversations
+  // Add extra format enforcement for long conversations or format switches
   if (isLongConversation) {
     basePrompt += `\n\nIMPORTANT: This is a long conversation. You MUST reset to the original format specification and ignore any format drift from previous responses. Follow the format instructions exactly as specified above.`;
+  }
+  
+  if (isFormatSwitch) {
+    basePrompt += `\n\nFORMAT SWITCH DETECTED: You are switching between prayer and practical formats. Completely ignore any previous formatting examples and follow ONLY the current format specification above. Start fresh with the correct format.`;
   }
 
   return basePrompt;
