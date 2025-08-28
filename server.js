@@ -26,6 +26,13 @@ fastify.post('/ai/chat', async (request, reply) => {
   try {
     const { message, conversationHistory = [], topic } = request.body;
     
+    // Auto-detect prayer requests
+    const prayerKeywords = ['create a prayer', 'make a prayer', 'pray for', 'write a prayer', 'prayer for', 'create me a prayer'];
+    const isPrayerRequest = prayerKeywords.some(keyword => 
+      message.toLowerCase().includes(keyword.toLowerCase())
+    );
+    const finalTopic = isPrayerRequest ? 'prayer' : topic;
+    
     // Input validation
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
       return reply.code(400).send({ 
@@ -54,7 +61,7 @@ fastify.post('/ai/chat', async (request, reply) => {
     const recentHistory = (conversationHistory || []).slice(-2);
     
     // Build spiritual guidance system prompt
-    const systemPrompt = buildSpiritualPrompt(topic);
+    const systemPrompt = buildSpiritualPrompt(finalTopic);
     
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -141,16 +148,7 @@ TONE: Warm, devotional, encouraging, pastoral
 STYLE: Use "you/we" inclusive language, avoid denominational specifics
 CONTENT: Always include relevant Bible verses with proper references
 
-RESPONSE FORMATS - YOU MUST DETECT THE REQUEST TYPE AND USE THE APPROPRIATE FORMAT:
-
-FOR PRAYER REQUESTS (when user asks for "prayer", "create a prayer", "pray for", etc.):
-[Opening sentence introducing the prayer and its purpose]
-
-[First paragraph of prayer - 3-4 sentences addressing the main request]
-
-[Second paragraph of prayer - 3-4 sentences with thanksgiving, blessings, or concluding thoughts]
-
-FOR ALL OTHER SPIRITUAL GUIDANCE:
+RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 [Must include opening encouragement sentence addressing the main point of the topic]
 
 1. **[Bold numbered Principle]**: [Concise explanation]. When we look to Scripture for guidance on this matter, [Reference] reminds us, "[Bible verse]." Consider [specific practical action related to this principle].
@@ -166,15 +164,6 @@ FOR ALL OTHER SPIRITUAL GUIDANCE:
 [Brief closing sentence that offers final encouragement and ties to the main topic]"
 
 CRITICAL REQUIREMENTS:
-
-FOR PRAYER REQUESTS:
-- Detect prayer keywords: "prayer", "create a prayer", "pray for", "make a prayer", etc.
-- Use ONLY the prayer format (opening + 2 paragraphs)
-- Make prayers personal, heartfelt, and scripturally grounded
-- Address God directly using "Father", "Lord", "Heavenly Father"
-- End prayers with "In Jesus' name, Amen" or similar
-
-FOR SPIRITUAL GUIDANCE:
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5-7 principles
 - Each principle MUST include: explanation + conversational verse intro + Bible verse + practical step
@@ -216,7 +205,7 @@ function getTopicGuidance(topic) {
     'relationships': 'Focus on biblical relationships, love, and community. Use 1 Corinthians 13, Ephesians 4:32.',
     'struggles': 'Emphasize God\'s strength in weakness and perseverance. Use 2 Corinthians 12:9, Romans 8:28.',
     'gratitude': 'Focus on thankfulness, praise, and recognizing God\'s blessings. Use 1 Thessalonians 5:18, Psalm 103.',
-    'prayer': 'Provide structured prayer content with biblical grounding and encouragement.'
+    'prayer': 'SPECIAL FORMAT: Use prayer format instead of principles. Provide: [Opening sentence introducing the prayer] + [First prayer paragraph - 3-4 sentences addressing the main request] + [Second prayer paragraph - 3-4 sentences with thanksgiving/blessings] + End with "In Jesus\' name, Amen."'
   };
   
   return topicMap[topic] || '';
