@@ -154,7 +154,7 @@ RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 
 5. **[Principle]**: [Concise explanation]. In moments like these, we can find great comfort knowing that [Reference] assures us, "[Bible verse]." Start with [specific practical action related to this principle].
 
-[Brief closing sentence that offers final encouragement and ties to the main topic]"
+[Closing paragraph that briefly lists each principle's main point, then ends with an encouraging conclusion about the topic]"
 
 CRITICAL REQUIREMENTS:
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
@@ -166,7 +166,7 @@ CRITICAL REQUIREMENTS:
 - Make verse introductions conversational and contextual, not generic or repetitive
 - Do NOT include verse citations in parentheses after the quote (reference is already mentioned before the verse)
 - Do NOT use asterisks (*) around verse references - write them as plain text (e.g., "Romans 8:28" not "*Romans 8:28*")
-- End with one brief, encouraging sentence (NOT a paragraph or prayer) that relates to the main topic
+- End with a closing paragraph that summarizes each principle's main point, then concludes with encouragement
 
 FORMATTING:
 - Use **bold** for principle titles ONLY
