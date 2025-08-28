@@ -55,7 +55,19 @@ fastify.post('/ai/chat', async (request, reply) => {
     try {
       // Auto-detect different request types
       const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
-      const informationalKeywords = ['what is', 'what does', 'what are', 'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means', 'who is', 'who was', 'where is', 'when did', 'how is', 'why is', 'what happened', 'what\'s the difference'];
+      const informationalKeywords = [
+        // Direct questions
+        'what is', 'what does', 'what are', 'what will', 'what happens', 'what happened',
+        'who is', 'who was', 'who are', 'where is', 'where does', 'when did', 'when will',
+        'how is', 'how does', 'why is', 'why does', 'why did',
+        // Educational requests
+        'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means',
+        'what\'s the difference', 'difference between',
+        // Theological questions (often structured as "do/does/will/can" questions)
+        'do my', 'does my', 'will my', 'can my', 'do i get', 'does god', 'will god',
+        'is it true', 'is there', 'are there', 'do we go', 'will we go', 'can we',
+        'am i saved', 'are we saved', 'do good deeds', 'does faith', 'will jesus'
+      ];
       
       const safeMessage = (message || '').toLowerCase();
     
