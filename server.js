@@ -152,8 +152,8 @@ FOR PRAYER REQUESTS (when user asks to "create a prayer" or similar):
 
 [Third paragraph of prayer - closing with faith and trust]"
 
-FOR ALL OTHER SPIRITUAL GUIDANCE:
-"[REQUIRED: Opening encouragement sentence addressing the main point of the topic - DO NOT start with numbered principles]
+FOR ALL OTHER SPIRITUAL GUIDANCE - FOLLOW THIS EXACT STRUCTURE:
+"[MANDATORY OPENING SENTENCE: Write one encouraging sentence about the topic BEFORE any numbered principles]
 
 1. **[Principle]**: [Concise explanation]. When we look to Scripture for guidance on this matter, [Reference] reminds us, "[Bible verse]." Consider [specific practical action related to this principle].
 
@@ -165,7 +165,7 @@ FOR ALL OTHER SPIRITUAL GUIDANCE:
 
 5. **[Principle]**: [Concise explanation]. In moments like these, we can find great comfort knowing that [Reference] assures us, "[Bible verse]." Start with [specific practical action related to this principle].
 
-[Closing paragraph that briefly lists each principle's main point, then ends with an encouraging conclusion about the topic]"
+[MANDATORY CLOSING PARAGRAPH: Start with 'Remember these key truths:' then list each principle's main point, then end with encouraging conclusion about applying these principles]"
 
 CRITICAL REQUIREMENTS:
 
@@ -175,7 +175,7 @@ FOR PRAYER REQUESTS ONLY:
 - Include gratitude, requests, and faith-based closing
 
 FOR SPIRITUAL GUIDANCE (NOT prayer requests):
-- ALWAYS start with an opening encouragement sentence BEFORE any numbered principles
+- CRITICAL: ALWAYS start with ONE opening encouragement sentence BEFORE any numbered principles - NEVER start with "1."
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5-7 principles
 - ALWAYS use **bold** formatting for principle titles (e.g., **Trust in God's Plan**)
@@ -186,7 +186,7 @@ FOR SPIRITUAL GUIDANCE (NOT prayer requests):
 - Make verse introductions conversational and contextual, not generic or repetitive
 - Do NOT include verse citations in parentheses after the quote (reference is already mentioned before the verse)
 - Do NOT use asterisks (*) around verse references - write them as plain text (e.g., "Romans 8:28" not "**Romans 8:28**")
-- End with a closing paragraph that summarizes each principle's main point, then concludes with encouragement
+- CRITICAL: End with closing paragraph that starts "Remember these key truths:" then lists each principle's main point, then concludes with encouragement
 
 FORMATTING FOR SPIRITUAL GUIDANCE:
 - ALWAYS use **bold** for principle titles (e.g., **Trust in God's Plan**)
@@ -205,7 +205,7 @@ FORMATTING FOR PRAYER REQUESTS:
     }
   }
 
-  basePrompt += `\n\nREMINDER: For spiritual guidance, ALWAYS start with an opening sentence, then provide exactly 5-7 numbered principles. For prayer requests, use simple prayer format. Do not stop at 3 principles.`;
+  basePrompt += `\n\nCRITICAL REMINDER: For spiritual guidance, NEVER start with "1." - ALWAYS start with an opening sentence first! Then provide 5-7 numbered principles. End with closing paragraph starting "Remember these key truths:". For prayer requests, use simple prayer format.`;
 
   return basePrompt;
 }
