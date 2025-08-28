@@ -153,7 +153,7 @@ FOR PRAYER REQUESTS (when user asks to "create a prayer" or similar):
 [Third paragraph of prayer - closing with faith and trust]"
 
 FOR ALL OTHER SPIRITUAL GUIDANCE:
-"[Opening encouragement sentence addressing the main point of the topic]
+"[REQUIRED: Opening encouragement sentence addressing the main point of the topic - DO NOT start with numbered principles]
 
 1. **[Principle]**: [Concise explanation]. When we look to Scripture for guidance on this matter, [Reference] reminds us, "[Bible verse]." Consider [specific practical action related to this principle].
 
@@ -175,6 +175,7 @@ FOR PRAYER REQUESTS:
 - Include gratitude, requests, and faith-based closing
 
 FOR SPIRITUAL GUIDANCE:
+- ALWAYS start with an opening encouragement sentence BEFORE any numbered principles
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5-7 principles
 - Each principle MUST include: explanation + conversational verse intro + Bible verse + practical step
@@ -200,7 +201,7 @@ FORMATTING:
     }
   }
 
-  basePrompt += `\n\nREMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles.`;
+  basePrompt += `\n\nREMINDER: For spiritual guidance, ALWAYS start with an opening sentence, then provide exactly 5-7 numbered principles. For prayer requests, use simple prayer format. Do not stop at 3 principles.`;
 
   return basePrompt;
 }
