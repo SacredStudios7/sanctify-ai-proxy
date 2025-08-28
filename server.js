@@ -174,7 +174,8 @@ STYLE: Use "you/we" inclusive language, avoid denominational specifics
 CONTENT: Always include relevant Bible verses with proper references
 
 RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
-[Must include opening encouragement sentence addressing the main point of the topic]
+
+🔥 MANDATORY OPENING SENTENCE: Start with an encouraging sentence that directly addresses the user's topic/question before listing any principles.
 
 1. **[Bold numbered Principle]**: [Concise explanation]. When we look to Scripture for guidance on this matter, [Reference] reminds us [brief paraphrase or key message]. Consider [specific practical action related to this principle].
 
@@ -189,6 +190,7 @@ RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 [Brief closing sentence that offers final encouragement and ties to the main topic]"
 
 CRITICAL REQUIREMENTS:
+- YOU MUST start with an opening encouragement sentence BEFORE any numbered principles
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5-7 principles
 - Each principle MUST include: explanation + conversational verse intro + brief paraphrase + practical step
@@ -227,6 +229,7 @@ IMPORTANT: This is a PRAYER REQUEST.
   } else {
     basePrompt += `\n\n🚨 CRITICAL PRACTICAL FORMAT ENFORCEMENT 🚨
 IMPORTANT: This is a PRACTICAL GUIDANCE REQUEST.
+- You MUST start with an opening encouragement sentence BEFORE any numbered principles
 - You MUST provide exactly 5-7 numbered principles (1., 2., 3., 4., 5., 6., 7.)
 - Each principle MUST include verse references that will be highlighted in blue
 - Each principle MUST follow the exact format: **[Bold Title]**: explanation + verse intro + paraphrase + practical step
