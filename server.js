@@ -234,21 +234,18 @@ Write a conversational prayer with:
 
 THIS IS A PRACTICAL GUIDANCE REQUEST:
 
-YOU MUST COPY THIS EXACT SENTENCE STRUCTURE. NO VARIATIONS ALLOWED:
+Provide spiritual guidance with 5 numbered principles in this exact format:
 
-[Opening sentence]
+Start with an encouraging opening sentence.
 
-1. **Title**: Explanation sentence. The Bible says, "Quote here" (John 3:16). Consider taking this step.
-2. **Title**: Explanation sentence. The Bible says, "Quote here" (Romans 8:28). Try implementing this approach.  
-3. **Title**: Explanation sentence. The Bible says, "Quote here" (Philippians 4:13). Practice this daily habit.
-4. **Title**: Explanation sentence. The Bible says, "Quote here" (Psalm 23:1). Begin by doing this action.
-5. **Title**: Explanation sentence. The Bible says, "Quote here" (Proverbs 3:5). Start incorporating this into your routine.
+Then provide exactly 5 principles like this:
+1. **[Actual Title]**: [Actual explanation]. The Bible says, "[Actual Bible quote]" ([Actual verse reference]). [Actual action step].
 
-CRITICAL SENTENCE ORDER REQUIREMENT:
-- EVERY principle MUST follow: "Explanation. The Bible says, 'Quote' (Verse). Action."
-- NEVER start with verse reference - ALWAYS start with explanation
-- ALWAYS use "The Bible says" - NEVER use verse name first
-- ALWAYS put verse reference in parentheses after the quote`;
+REQUIREMENTS:
+- Use real titles, explanations, quotes, verses, and actions - NOT template text
+- Every principle must follow: Title + Explanation + "The Bible says" + Quote + (Verse) + Action
+- Use actual Bible verses and real quotes from Scripture
+- Provide practical, specific action steps`;
   }
 
   return basePrompt;
