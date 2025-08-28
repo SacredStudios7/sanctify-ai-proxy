@@ -195,13 +195,18 @@ function buildSpiritualPrompt(topic) {
   }
   
   return `Provide exactly 5 numbered principles. Each principle must follow this EXACT format:
-**Title**: Explanation. The Bible says, "Quote" (Verse). Consider taking specific action.
+**Title**: Explanation. The Bible says, "Quote" (Verse). [Varied action starting word].
 
 CRITICAL: NEVER write "Action step:" - make the action flow naturally after the verse.
 
-Examples of correct format:
-**Trust God**: Explanation here. The Bible says, "Quote" (Romans 8:28). Consider starting each day with prayer.
-**Have Faith**: Explanation here. The Bible says, "Quote" (Hebrews 11:1). Try reading Scripture daily.
+Examples with VARIED action words:
+**Trust God**: Explanation here. The Bible says, "Quote" (Romans 8:28). Try starting each day with prayer.
+**Have Faith**: Explanation here. The Bible says, "Quote" (Hebrews 11:1). Begin reading Scripture daily.
+**Show Love**: Explanation here. The Bible says, "Quote" (John 3:16). Practice acts of kindness today.
+**Stay Strong**: Explanation here. The Bible says, "Quote" (Isaiah 40:31). Focus on prayer when struggling.
+**Find Peace**: Explanation here. The Bible says, "Quote" (Philippians 4:7). Start meditating on God's promises.
+
+Use varied action starters: Try, Begin, Practice, Focus on, Start, Take time to, Make it a habit to, Commit to, Choose to, etc.
 
 Format:
 1. Start with encouraging opening sentence
