@@ -238,13 +238,16 @@ YOU MUST COPY THIS EXACT FORMAT. DO NOT DEVIATE:
 
 [Opening sentence]
 
-1. **Title**: Explanation. John 3:16 says, "Quote." Action.
-2. **Title**: Explanation. Romans 8:28 says, "Quote." Action.  
-3. **Title**: Explanation. Philippians 4:13 says, "Quote." Action.
-4. **Title**: Explanation. Psalm 23:1 says, "Quote." Action.
-5. **Title**: Explanation. Proverbs 3:5 says, "Quote." Action.
+1. **Title**: Explanation. John 3:16 says, "Quote." Consider taking this step.
+2. **Title**: Explanation. Romans 8:28 says, "Quote." Try implementing this approach.  
+3. **Title**: Explanation. Philippians 4:13 says, "Quote." Practice this daily habit.
+4. **Title**: Explanation. Psalm 23:1 says, "Quote." Begin by doing this action.
+5. **Title**: Explanation. Proverbs 3:5 says, "Quote." Start incorporating this into your routine.
 
-CRITICAL: Every principle MUST use "[Verse] says, 'Quote.'" - NO other words like "reminds", "states", "teaches", "instructs". ONLY "says".`;
+CRITICAL: 
+- Every principle MUST use "Verse says, 'Quote.'" - NO brackets around verse references
+- NO other words like "reminds", "states", "teaches", "instructs". ONLY "says"
+- Vary action words: Consider, Try, Practice, Begin, Start, Focus on, Work on, etc.`;
   }
 
   return basePrompt;
