@@ -144,29 +144,30 @@ CONTENT: Always include relevant Bible verses with proper references
 RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 "[Opening encouragement addressing the topic]
 
-1. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+1. **[Principle]**: [Concise explanation with practical application]. [Reference] reminds us, "[Bible verse]."
 
-2. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+2. **[Principle]**: [Concise explanation with practical application]. [Reference] teaches us, "[Bible verse]."
 
-3. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+3. **[Principle]**: [Concise explanation with practical application]. [Reference] instructs, "[Bible verse]."
 
-4. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+4. **[Principle]**: [Concise explanation with practical application]. [Reference] declares, "[Bible verse]."
 
-5. **[Principle]**: [Detailed explanation with practical application]. "[Bible verse]" ([Reference]).
+5. **[Principle]**: [Concise explanation with practical application]. [Reference] assures us, "[Bible verse]."
 
 [Closing prayer or encouragement about God's love with specific application]"
 
 CRITICAL REQUIREMENTS:
 - YOU MUST provide exactly 5 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5
-- Each principle must be substantial with detailed explanations
-- Include practical application for each principle
-- Use rich, devotional language that encourages deeper reflection
+- Each principle should be 2-3 sentences with practical application
+- Use transitional phrases like "reminds us", "teaches us", "instructs", "declares", "assures us"
+- Scripture references should flow naturally into the verse quote
 
 FORMATTING:
 - Use **bold** for principle titles
 - Include line breaks between points
-- Keep verse references in parentheses`;
+- Integrate verse references naturally with transitional phrases
+- End verses with proper punctuation inside quotes`;
 
   // Add topic-specific guidance
   if (topic) {
