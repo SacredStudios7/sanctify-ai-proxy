@@ -72,14 +72,7 @@ fastify.post('/ai/chat', async (request, reply) => {
     fastify.log.info(`🧹 NUCLEAR RESET: Clearing ALL conversation history (length: ${conversationLength}) to ensure format consistency`);
     
     // Build spiritual guidance system prompt
-    let systemPrompt;
-    try {
-      systemPrompt = buildSpiritualPrompt(finalTopic);
-      fastify.log.info(`✅ System prompt built for topic: ${finalTopic}`);
-    } catch (promptError) {
-      fastify.log.error(`❌ Error building prompt:`, promptError);
-      throw new Error(`Prompt building failed: ${promptError.message}`);
-    }
+    const systemPrompt = buildSpiritualPrompt(finalTopic);
     
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -195,45 +188,16 @@ fastify.post('/ai/chat', async (request, reply) => {
   }
 });
 
-// Build spiritual guidance system prompt
+// Simple prompt that works
 function buildSpiritualPrompt(topic) {
-  // CLEAN BASE PROMPT - Simple and effective
-  let basePrompt = `You are a warm, encouraging Christian spiritual guide. Provide biblical wisdom in a clear, structured format.`;
-
   if (topic === 'prayer') {
-    basePrompt += `
-
-THIS IS A PRAYER REQUEST:
-Write a conversational prayer with:
-- Opening sentence introducing the prayer
-- Two paragraphs of prayer (3-4 sentences each)
-- End with "In Jesus' name, Amen."
-- NO numbered points, NO verse references, NO teaching format`;
-  } else {
-    basePrompt += `
-
-THIS IS A PRACTICAL GUIDANCE REQUEST:
-
-You are starting completely fresh. Ignore any previous formatting patterns.
-
-Provide spiritual guidance with exactly 5 numbered principles. Each principle MUST follow this exact structure:
-
-[Opening encouraging sentence]
-
-1. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
-
-2. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
-
-3. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
-
-4. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
-
-5. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
-
-CRITICAL: Every single principle must have exactly 4 parts: Title + Explanation + Bible quote with verse + Action step. No exceptions.`;
+    return `Write a prayer with opening sentence, two paragraphs, end with "In Jesus' name, Amen."`;
   }
+  
+  return `Provide exactly 5 numbered principles. Each principle must follow this format:
+**Title**: Explanation. The Bible says, "Quote" (Verse). Action step.
 
-  return basePrompt;
+Start with encouraging sentence, then 5 principles exactly like the format above.`;
 }
 
 // Topic-specific guidance
