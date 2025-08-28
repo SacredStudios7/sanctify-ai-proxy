@@ -68,14 +68,13 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     // ALWAYS clear history - no exceptions, no conditions
     let recentHistory = [];
-    let isPreviousFormatDifferent = false;
     
     fastify.log.info(`🧹 NUCLEAR RESET: Clearing ALL conversation history (length: ${conversationLength}) to ensure format consistency`);
     
     // Build spiritual guidance system prompt
     let systemPrompt;
     try {
-      systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation, isPreviousFormatDifferent);
+      systemPrompt = buildSpiritualPrompt(finalTopic);
       fastify.log.info(`✅ System prompt built for topic: ${finalTopic}`);
     } catch (promptError) {
       fastify.log.error(`❌ Error building prompt:`, promptError);
@@ -197,7 +196,7 @@ fastify.post('/ai/chat', async (request, reply) => {
 });
 
 // Build spiritual guidance system prompt
-function buildSpiritualPrompt(topic, isLongConversation = false, isFormatSwitch = false) {
+function buildSpiritualPrompt(topic) {
   // CLEAN BASE PROMPT - Simple and effective
   let basePrompt = `You are a warm, encouraging Christian spiritual guide. Provide biblical wisdom in a clear, structured format.`;
 
