@@ -63,33 +63,14 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     fastify.log.info(`🚀 AI Request: "${message.substring(0, 50)}..."`);
     
-    // AGGRESSIVE FORMAT PROTECTION: Clear ALL history in long conversations to prevent degradation
+    // NUCLEAR FORMAT PROTECTION: Clear ALL history after EVERY request to prevent any degradation
     const conversationLength = (conversationHistory || []).length;
-    const isLongConversation = conversationLength > 4; // Reduced threshold
     
-    // For long conversations, ALWAYS clear history to prevent format contamination
+    // ALWAYS clear history - no exceptions, no conditions
     let recentHistory = [];
     let isPreviousFormatDifferent = false;
     
-    if (!isLongConversation) {
-      // Only keep history for short conversations
-      recentHistory = (conversationHistory || []).slice(-1);
-      
-          // Detect format switching and clear history to prevent confusion
-    const lastMessage = recentHistory[0];
-    isPreviousFormatDifferent = lastMessage && lastMessage.content && (
-      (isPrayerRequest && !lastMessage.content.includes('In Jesus\' name')) ||
-      (!isPrayerRequest && lastMessage.content.includes('In Jesus\' name'))
-    );
-      
-      // Clear history when switching between prayer and practical formats
-      if (isPreviousFormatDifferent) {
-        recentHistory = [];
-        fastify.log.info('🔄 Format switch detected - clearing conversation history');
-      }
-    } else {
-      fastify.log.info('🧹 Long conversation detected - clearing ALL history to prevent format degradation');
-    }
+    fastify.log.info(`🧹 NUCLEAR RESET: Clearing ALL conversation history (length: ${conversationLength}) to ensure format consistency`);
     
     // Build spiritual guidance system prompt
     let systemPrompt;
@@ -234,18 +215,23 @@ Write a conversational prayer with:
 
 THIS IS A PRACTICAL GUIDANCE REQUEST:
 
-Provide spiritual guidance with 5 numbered principles in this exact format:
+You are starting completely fresh. Ignore any previous formatting patterns.
 
-Start with an encouraging opening sentence.
+Provide spiritual guidance with exactly 5 numbered principles. Each principle MUST follow this exact structure:
 
-Then provide exactly 5 principles like this:
-1. **[Actual Title]**: [Actual explanation]. The Bible says, "[Actual Bible quote]" ([Actual verse reference]). [Actual action step].
+[Opening encouraging sentence]
 
-REQUIREMENTS:
-- Use real titles, explanations, quotes, verses, and actions - NOT template text
-- Every principle must follow: Title + Explanation + "The Bible says" + Quote + (Verse) + Action
-- Use actual Bible verses and real quotes from Scripture
-- Provide practical, specific action steps`;
+1. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
+
+2. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
+
+3. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
+
+4. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
+
+5. **[Title]**: [One explanation sentence]. The Bible says, "[Scripture quote]" ([Verse reference]). [One specific action sentence].
+
+CRITICAL: Every single principle must have exactly 4 parts: Title + Explanation + Bible quote with verse + Action step. No exceptions.`;
   }
 
   return basePrompt;
