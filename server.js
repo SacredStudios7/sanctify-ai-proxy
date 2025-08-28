@@ -165,12 +165,13 @@ CRITICAL REQUIREMENTS:
 - Scripture references should flow naturally into the verse quote
 - Make verse introductions conversational and contextual, not generic or repetitive
 - Do NOT include verse citations in parentheses after the quote (reference is already mentioned before the verse)
+- Do NOT use asterisks (*) around verse references - write them as plain text (e.g., "Romans 8:28" not "*Romans 8:28*")
 - End with one brief, encouraging sentence (NOT a paragraph or prayer) that relates to the main topic
 
 FORMATTING:
-- Use **bold** for principle titles
+- Use **bold** for principle titles ONLY
 - Include line breaks between points
-- Integrate verse references naturally with transitional phrases
+- Integrate verse references naturally with transitional phrases as plain text (no asterisks)
 - End verses with proper punctuation inside quotes (no parenthetical citations)`;
 
   // Add topic-specific guidance
