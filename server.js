@@ -63,6 +63,9 @@ fastify.post('/ai/chat', async (request, reply) => {
         // Educational requests
         'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means',
         'what\'s the difference', 'difference between',
+        // Bible-specific questions
+        'where in the bible', 'where does the bible', 'what verse', 'which verse',
+        'scripture says', 'bible verse about', 'biblical', 'according to scripture',
         // Theological questions (often structured as "do/does/will/can" questions)
         'do my', 'does my', 'will my', 'can my', 'do i get', 'does god', 'will god',
         'is it true', 'is there', 'are there', 'do we go', 'will we go', 'can we',
@@ -134,6 +137,16 @@ fastify.post('/ai/chat', async (request, reply) => {
     }
     
     console.log(`🎯 FINAL TOPIC SELECTED: "${finalTopic}"`);
+    console.log(`📋 FORMAT EXPLANATION:`);
+    if (finalTopic === 'prayer') {
+      console.log(`   → PRAYER: Opening + 2 paragraphs + "In Jesus' name, Amen"`);
+    } else if (finalTopic === 'informational') {
+      console.log(`   → INFORMATIONAL: 3 educational paragraphs with biblical context`);
+    } else if (finalTopic === 'conversational') {
+      console.log(`   → CONVERSATIONAL: 1-3 brief, friendly sentences`);
+    } else if (finalTopic === 'practical') {
+      console.log(`   → PRACTICAL: 5 numbered principles with verses and actions`);
+    }
     
     } catch (detectionError) {
       console.error('❌ Error in message detection:', detectionError);
