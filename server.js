@@ -44,16 +44,21 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     const safeMessage = (message || '').toLowerCase();
     
+    // Detect explicit prayer creation requests
     const isPrayerCreationRequest = prayerCreationKeywords.some(keyword => 
       safeMessage.includes(keyword.toLowerCase())
     );
+    
+    // Detect any prayer request (broader detection)
+    const isPrayerRequest = isPrayerCreationRequest || 
+      (safeMessage.includes('prayer') && !safeMessage.includes('what is prayer') && !safeMessage.includes('explain prayer') && !safeMessage.includes('define prayer'));
     
     const isInformationalRequest = informationalKeywords.some(keyword => 
       safeMessage.includes(keyword.toLowerCase())
     );
     
     let finalTopic;
-    if (isPrayerCreationRequest) {
+    if (isPrayerRequest) {
       finalTopic = 'prayer';
     } else if (isInformationalRequest) {
       finalTopic = 'informational';
