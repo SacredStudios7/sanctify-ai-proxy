@@ -178,6 +178,7 @@ FOR SPIRITUAL GUIDANCE:
 - ALWAYS start with an opening encouragement sentence BEFORE any numbered principles
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5-7 principles
+- Each principle title MUST be bolded using **bold** formatting (e.g., **Trust in God's Plan**)
 - Each principle MUST include: explanation + conversational verse intro + Bible verse + practical step
 - Each practical step must be a concrete action, NOT a prayer prompt (avoid "Pray:" - use action words like "Consider", "Try", "Practice", "Begin", "Start")
 - Use transitional phrases like "reminds us", "teaches us", "instructs", "declares", "assures us"
@@ -201,7 +202,7 @@ FORMATTING:
     }
   }
 
-  basePrompt += `\n\nREMINDER: For spiritual guidance, ALWAYS start with an opening sentence, then provide exactly 5-7 numbered principles. For prayer requests, use simple prayer format. Do not stop at 3 principles.`;
+  basePrompt += `\n\nREMINDER: For spiritual guidance, ALWAYS start with an opening sentence, then provide exactly 5-7 numbered principles with **bolded titles**. For prayer requests, use simple prayer format. Do not stop at 3 principles.`;
 
   return basePrompt;
 }
