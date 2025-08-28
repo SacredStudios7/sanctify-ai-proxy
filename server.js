@@ -195,14 +195,14 @@ function buildSpiritualPrompt(topic) {
   }
   
   return `Provide exactly 5 numbered principles. Each principle must follow this format:
-**Title**: Explanation. The Bible says, "Quote" (Verse). Action step.
+**Title**: Explanation. The Bible says, "Quote" (Verse). [Seamless action sentence starting with words like: Consider, Try, Practice, Begin, Start, Focus on, etc.]
 
 Format:
 1. Start with encouraging opening sentence
 2. Provide exactly 5 numbered principles in the format above  
 3. End with encouraging conclusion paragraph
 
-Always include the conclusion paragraph at the end.`;
+The action sentences should flow naturally without labels - use action words like "Consider taking time to...", "Try implementing this by...", "Practice this daily through...", "Begin by focusing on...", etc.`;
 }
 
 // Topic-specific guidance
