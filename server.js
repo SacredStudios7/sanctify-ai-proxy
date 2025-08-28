@@ -51,7 +51,6 @@ fastify.post('/ai/chat', async (request, reply) => {
       // Auto-detect different request types
       const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
       const informationalKeywords = ['what is', 'what does', 'what are', 'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means', 'who is', 'who was', 'where is', 'when did', 'how is', 'why is', 'what happened', 'what\'s the difference'];
-      const practicalKeywords = ['how do i', 'how can i', 'help me', 'guide me', 'i need', 'i want to', 'i struggle with', 'i\'m struggling', 'advice', 'guidance', 'steps', 'overcome', 'deal with', 'handle'];
       
       const safeMessage = (message || '').toLowerCase();
     
@@ -70,10 +69,6 @@ fastify.post('/ai/chat', async (request, reply) => {
       safeMessage.includes(keyword.toLowerCase())
     );
     
-    const isPracticalRequest = practicalKeywords.some(keyword => 
-      safeMessage.includes(keyword.toLowerCase())
-    );
-    
     // Check if message is casual/conversational (short, greeting, typo, etc.)
     const casualWords = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'];
     const containsCasualWord = casualWords.some(word => safeMessage.includes(word));
@@ -87,19 +82,17 @@ fastify.post('/ai/chat', async (request, reply) => {
     console.log(`   Message: "${safeMessage}" (length: ${safeMessage.length})`);
     console.log(`   Prayer request: ${isPrayerRequest}`);
     console.log(`   Informational request: ${isInformationalRequest}`);
-    console.log(`   Practical request: ${isPracticalRequest}`);
     console.log(`   Casual message: ${isCasualMessage}`);
+    console.log(`   -> Will default to PRACTICAL for spiritual questions`);
     
     if (isPrayerRequest) {
       finalTopic = 'prayer';
     } else if (isInformationalRequest) {
       finalTopic = 'informational';
-    } else if (isPracticalRequest && !isCasualMessage) {
-      finalTopic = 'practical';
     } else if (isCasualMessage) {
       finalTopic = 'conversational';
     } else {
-      finalTopic = 'conversational'; // Default to conversational for anything unclear
+      finalTopic = 'practical'; // Default to practical for any spiritual/Christian questions
     }
     
     console.log(`🎯 FINAL TOPIC SELECTED: "${finalTopic}"`);
