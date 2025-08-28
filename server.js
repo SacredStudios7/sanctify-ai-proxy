@@ -31,8 +31,13 @@ fastify.post('/ai/chat', async (request, reply) => {
   const requestStart = Date.now();
   
   try {
+    console.log('🎯 NEW REQUEST RECEIVED');
+    console.log('📋 Request body type:', typeof request.body);
+    console.log('📋 Request body keys:', request.body ? Object.keys(request.body) : 'none');
+    
     // Enhanced input validation
     if (!request.body) {
+      console.error('❌ No request body provided');
       return reply.code(400).send({ error: 'Request body is required' });
     }
     
@@ -102,7 +107,8 @@ fastify.post('/ai/chat', async (request, reply) => {
     console.log(`🎯 FINAL TOPIC SELECTED: "${finalTopic}"`);
     
     } catch (detectionError) {
-      console.error('Error in message detection:', detectionError);
+      console.error('❌ Error in message detection:', detectionError);
+      console.error('❌ Detection error stack:', detectionError.stack);
       // Default to conversational format if detection fails
       finalTopic = 'conversational';
     }
@@ -235,11 +241,18 @@ fastify.post('/ai/chat', async (request, reply) => {
     
   } catch (error) {
     const totalTime = Date.now() - requestStart;
+    console.error('🚨 CRITICAL ERROR IN AI CHAT ENDPOINT');
+    console.error('🚨 Error type:', error.constructor.name);
+    console.error('🚨 Error message:', error.message);
+    console.error('🚨 Error stack:', error.stack);
+    console.error('🚨 Request details:');
+    console.error('   - Message:', message);
+    console.error('   - Topic:', topic);
+    console.error('   - Final topic:', finalTopic);
+    console.error('   - History length:', conversationHistory?.length || 0);
+    console.error('   - Total time:', totalTime + 'ms');
+    
     fastify.log.error(`Error in AI chat (${totalTime}ms):`, error);
-    fastify.log.error(`Error stack:`, error.stack);
-    fastify.log.error(`Message:`, message);
-    fastify.log.error(`Topic:`, topic);
-    fastify.log.error(`Conversation history length:`, conversationHistory?.length || 0);
     
     return reply.code(500).send({ 
       error: 'Internal server error',
