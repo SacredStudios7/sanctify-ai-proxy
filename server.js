@@ -57,26 +57,33 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     fastify.log.info(`🚀 AI Request: "${message.substring(0, 50)}..."`);
     
-    // Build optimized message context - keep minimal for speed and format consistency
-    // Use only the last message to prevent format degradation over time
-    let recentHistory = (conversationHistory || []).slice(-1);
-    
-    // Detect format switching and clear history to prevent confusion
-    const lastMessage = recentHistory[0];
-    const isPreviousFormatDifferent = lastMessage && (
-      (isPrayerRequest && !lastMessage.content?.includes('In Jesus\' name')) ||
-      (!isPrayerRequest && lastMessage.content?.includes('In Jesus\' name'))
-    );
-    
-    // Clear history when switching between prayer and practical formats
-    if (isPreviousFormatDifferent) {
-      recentHistory = [];
-      fastify.log.info('🔄 Format switch detected - clearing conversation history');
-    }
-    
-    // Detect long conversations and provide stronger format reinforcement
+    // AGGRESSIVE FORMAT PROTECTION: Clear ALL history in long conversations to prevent degradation
     const conversationLength = (conversationHistory || []).length;
-    const isLongConversation = conversationLength > 6;
+    const isLongConversation = conversationLength > 4; // Reduced threshold
+    
+    // For long conversations, ALWAYS clear history to prevent format contamination
+    let recentHistory = [];
+    let isPreviousFormatDifferent = false;
+    
+    if (!isLongConversation) {
+      // Only keep history for short conversations
+      recentHistory = (conversationHistory || []).slice(-1);
+      
+      // Detect format switching and clear history to prevent confusion
+      const lastMessage = recentHistory[0];
+      isPreviousFormatDifferent = lastMessage && (
+        (isPrayerRequest && !lastMessage.content?.includes('In Jesus\' name')) ||
+        (!isPrayerRequest && lastMessage.content?.includes('In Jesus\' name'))
+      );
+      
+      // Clear history when switching between prayer and practical formats
+      if (isPreviousFormatDifferent) {
+        recentHistory = [];
+        fastify.log.info('🔄 Format switch detected - clearing conversation history');
+      }
+    } else {
+      fastify.log.info('🧹 Long conversation detected - clearing ALL history to prevent format degradation');
+    }
     
     // Build spiritual guidance system prompt
     const systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation, isPreviousFormatDifferent);
@@ -206,19 +213,38 @@ FORMATTING:
     }
   }
 
+  // AGGRESSIVE FORMAT ENFORCEMENT
   if (topic === 'prayer') {
-    basePrompt += `\n\nCRITICAL PRAYER FORMAT REMINDER: This is a PRAYER REQUEST. Do NOT use numbered principles, verse references, or scripture citations. Use ONLY the prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen." Write as a conversational prayer to God, not a teaching format. IGNORE any previous formatting examples in the conversation.`;
+    basePrompt += `\n\n🚨 CRITICAL PRAYER FORMAT ENFORCEMENT 🚨
+IMPORTANT: This is a PRAYER REQUEST. 
+- ABSOLUTELY NO numbered principles (1., 2., 3., etc.)
+- ABSOLUTELY NO verse references or scripture citations
+- ABSOLUTELY NO teaching format or explanations
+- Use ONLY prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen."
+- Write ONLY as a conversational prayer to God
+- COMPLETELY IGNORE any previous formatting examples in this conversation
+- RESET to pure prayer format regardless of conversation history`;
   } else {
-    basePrompt += `\n\nCRITICAL FORMAT REMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles. Each principle must follow the exact format specified above. IGNORE any inconsistent formatting from previous messages in this conversation.`;
+    basePrompt += `\n\n🚨 CRITICAL PRACTICAL FORMAT ENFORCEMENT 🚨
+IMPORTANT: This is a PRACTICAL GUIDANCE REQUEST.
+- You MUST provide exactly 5-7 numbered principles (1., 2., 3., 4., 5., 6., 7.)
+- Each principle MUST include verse references that will be highlighted in blue
+- Each principle MUST follow the exact format: **[Bold Title]**: explanation + verse intro + paraphrase + practical step
+- Do NOT stop at 3 principles - continue to 5-7 principles
+- COMPLETELY IGNORE any prayer formatting from previous messages
+- RESET to numbered principles format regardless of conversation history`;
   }
   
-  // Add extra format enforcement for long conversations or format switches
-  if (isLongConversation) {
-    basePrompt += `\n\nIMPORTANT: This is a long conversation. You MUST reset to the original format specification and ignore any format drift from previous responses. Follow the format instructions exactly as specified above.`;
-  }
-  
-  if (isFormatSwitch) {
-    basePrompt += `\n\nFORMAT SWITCH DETECTED: You are switching between prayer and practical formats. Completely ignore any previous formatting examples and follow ONLY the current format specification above. Start fresh with the correct format.`;
+  // Add ULTRA-aggressive format enforcement for long conversations or format switches
+  if (isLongConversation || isFormatSwitch) {
+    basePrompt += `\n\n🔥 ULTRA FORMAT RESET REQUIRED 🔥
+This conversation has experienced format degradation. You MUST:
+- COMPLETELY FORGET all previous formatting patterns
+- IGNORE all previous response structures in this conversation
+- START COMPLETELY FRESH with the correct format specified above
+- Do NOT mix prayer and practical formats under ANY circumstances
+- Your response format is determined ONLY by the current request, not conversation history
+- RESET your formatting completely and follow ONLY the current format specification`;
   }
 
   return basePrompt;
