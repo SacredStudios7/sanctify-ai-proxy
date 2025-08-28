@@ -69,20 +69,24 @@ fastify.post('/ai/chat', async (request, reply) => {
       safeMessage.includes(keyword.toLowerCase())
     );
     
-    // Check if message is casual/conversational (short, greeting, typo, etc.)
-    const casualWords = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'];
-    const containsCasualWord = casualWords.some(word => safeMessage.includes(word));
-    const isShortMessage = safeMessage.length < 10;
-    const isSingleWord = !safeMessage.includes(' ');
-    const hasNoPunctuation = !/[.?!]/.test(safeMessage);
-    
-    const isCasualMessage = isShortMessage || containsCasualWord || isSingleWord || hasNoPunctuation;
+          // Check if message is casual/conversational (short, greeting, typo, etc.)
+      const casualWords = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'];
+      const containsCasualWord = casualWords.some(word => safeMessage.includes(word));
+      const isVeryShortMessage = safeMessage.length < 6; // Made more restrictive
+      const isSingleWord = !safeMessage.includes(' ') && safeMessage.length < 8; // More restrictive for single words
+      
+      // Only consider casual if it's VERY clearly casual - not just missing punctuation
+      const isCasualMessage = isVeryShortMessage || containsCasualWord || isSingleWord;
     
     console.log(`🔍 MESSAGE ANALYSIS DEBUG:`);
     console.log(`   Message: "${safeMessage}" (length: ${safeMessage.length})`);
     console.log(`   Prayer request: ${isPrayerRequest}`);
     console.log(`   Informational request: ${isInformationalRequest}`);
-    console.log(`   Casual message: ${isCasualMessage}`);
+    console.log(`   Casual details:`);
+    console.log(`     - Very short (< 6 chars): ${isVeryShortMessage}`);
+    console.log(`     - Contains casual word: ${containsCasualWord}`);
+    console.log(`     - Single word (< 8 chars): ${isSingleWord}`);
+    console.log(`     - Final casual result: ${isCasualMessage}`);
     console.log(`   -> Will default to PRACTICAL for spiritual questions`);
     
     if (isPrayerRequest) {
