@@ -57,11 +57,16 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     fastify.log.info(`🚀 AI Request: "${message.substring(0, 50)}..."`);
     
-    // Build optimized message context - keep minimal for speed
-    const recentHistory = (conversationHistory || []).slice(-2);
+    // Build optimized message context - keep minimal for speed and format consistency
+    // Use only the last message to prevent format degradation over time
+    const recentHistory = (conversationHistory || []).slice(-1);
+    
+    // Detect long conversations and provide stronger format reinforcement
+    const conversationLength = (conversationHistory || []).length;
+    const isLongConversation = conversationLength > 6;
     
     // Build spiritual guidance system prompt
-    const systemPrompt = buildSpiritualPrompt(finalTopic);
+    const systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation);
     
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -141,7 +146,7 @@ fastify.post('/ai/chat', async (request, reply) => {
 });
 
 // Build spiritual guidance system prompt
-function buildSpiritualPrompt(topic) {
+function buildSpiritualPrompt(topic, isLongConversation = false) {
   let basePrompt = `You are a Christian devotional guide for the Sanctify app. Provide warm, encouraging, and pastoral spiritual guidance grounded in Scripture.
 
 TONE: Warm, devotional, encouraging, pastoral
@@ -189,9 +194,14 @@ FORMATTING:
   }
 
   if (topic === 'prayer') {
-    basePrompt += `\n\nCRITICAL PRAYER FORMAT REMINDER: This is a PRAYER REQUEST. Do NOT use numbered principles, verse references, or scripture citations. Use ONLY the prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen." Write as a conversational prayer to God, not a teaching format.`;
+    basePrompt += `\n\nCRITICAL PRAYER FORMAT REMINDER: This is a PRAYER REQUEST. Do NOT use numbered principles, verse references, or scripture citations. Use ONLY the prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen." Write as a conversational prayer to God, not a teaching format. IGNORE any previous formatting examples in the conversation.`;
   } else {
-    basePrompt += `\n\nREMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles.`;
+    basePrompt += `\n\nCRITICAL FORMAT REMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles. Each principle must follow the exact format specified above. IGNORE any inconsistent formatting from previous messages in this conversation.`;
+  }
+  
+  // Add extra format enforcement for long conversations
+  if (isLongConversation) {
+    basePrompt += `\n\nIMPORTANT: This is a long conversation. You MUST reset to the original format specification and ignore any format drift from previous responses. Follow the format instructions exactly as specified above.`;
   }
 
   return basePrompt;
