@@ -332,24 +332,27 @@ Write 1-3 short sentences maximum. Be natural, not formal. Show God's love throu
   }
   
   // Default to practical format for guidance requests
-  return `Provide exactly 5 numbered principles. Each principle must follow this EXACT format:
-**Title**: Explanation. The Bible says, "Quote" (Verse). [Varied action starting word].
+  return `Provide exactly 5 numbered principles with proper spacing. Each principle must follow this EXACT format:
+
+[Encouraging opening sentence]
+
+1. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
+
+2. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
+
+3. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
+
+4. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
+
+5. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
+
+[Encouraging conclusion paragraph]
+
+CRITICAL SPACING: Each numbered principle MUST be separated by a blank line. Do not run principles together.
 
 CRITICAL: NEVER write "Action step:" - make the action flow naturally after the verse.
 
-Examples with VARIED action words:
-**Trust God**: Explanation here. The Bible says, "Quote" (Romans 8:28). Try starting each day with prayer.
-**Have Faith**: Explanation here. The Bible says, "Quote" (Hebrews 11:1). Begin reading Scripture daily.
-**Show Love**: Explanation here. The Bible says, "Quote" (John 3:16). Practice acts of kindness today.
-**Stay Strong**: Explanation here. The Bible says, "Quote" (Isaiah 40:31). Focus on prayer when struggling.
-**Find Peace**: Explanation here. The Bible says, "Quote" (Philippians 4:7). Start meditating on God's promises.
-
 Use varied action starters: Try, Begin, Practice, Focus on, Start, Take time to, Make it a habit to, Commit to, Choose to, etc.
-
-Format:
-1. Start with encouraging opening sentence
-2. Provide exactly 5 numbered principles in the format above  
-3. End with encouraging conclusion paragraph
 
 FORBIDDEN: Never use "Action step:", "Practical step:", or any labels before actions.`;
 }
