@@ -244,23 +244,42 @@ function getTopicGuidance(topic) {
 
 // Parse AI response for structured content
 function parseAIResponse(content) {
-  // Extract verse references - updated to match new format without parentheses
-  const verseMatches = content.match(/(?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Psalms|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)\s+\d+:\d+(?:-\d+)?/g) || [];
-  const verseReferences = verseMatches.map(match => {
-    const parts = match.split(/\s+/);
+  // Extract verse references - comprehensive matching for all formats and contexts
+  const versePatterns = [
+    // Standard format: "Book Chapter:Verse"
+    /(?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Psalms|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)\s+\d+:\d+(?:-\d+)?/gi,
+    // Parenthetical format: "(Book Chapter:Verse)"
+    /\((?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Psalms|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)\s+\d+:\d+(?:-\d+)?\)/gi
+  ];
+  
+  let allMatches = [];
+  versePatterns.forEach(pattern => {
+    const matches = content.match(pattern) || [];
+    allMatches = allMatches.concat(matches);
+  });
+  
+  const verseReferences = allMatches.map(match => {
+    // Clean up parentheses if present
+    const cleanMatch = match.replace(/[()]/g, '');
+    const parts = cleanMatch.split(/\s+/);
     if (parts.length >= 2) {
       const verseRef = parts[parts.length - 1];
       const book = parts.slice(0, -1).join(' ');
       if (verseRef.includes(':')) {
-        return { book, reference: verseRef, fullReference: match };
+        return { book, reference: verseRef, fullReference: cleanMatch };
       }
     }
     return null;
   }).filter(Boolean);
+  
+  // Remove duplicates
+  const uniqueVerses = verseReferences.filter((verse, index, self) => 
+    index === self.findIndex(v => v.fullReference === verse.fullReference)
+  );
 
   return {
     content: content.trim(),
-    verseReferences,
+    verseReferences: uniqueVerses,
     contentType: 'spiritual_guidance',
     formattedAt: new Date().toISOString()
   };
