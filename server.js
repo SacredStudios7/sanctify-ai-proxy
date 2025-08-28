@@ -24,14 +24,20 @@ fastify.post('/ai/chat', async (request, reply) => {
   const requestStart = Date.now();
   
   try {
+    // Enhanced input validation
+    if (!request.body) {
+      return reply.code(400).send({ error: 'Request body is required' });
+    }
+    
     const { message, conversationHistory = [], topic } = request.body;
     
-    // Auto-detect prayer requests
+    // Auto-detect prayer requests with safety checks
     const prayerKeywords = ['create a prayer', 'make a prayer', 'pray for', 'write a prayer', 'prayer for', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'help me pray'];
+    const safeMessage = (message || '').toLowerCase();
     const isPrayerRequest = prayerKeywords.some(keyword => 
-      message.toLowerCase().includes(keyword.toLowerCase())
-    ) || message.toLowerCase().includes('prayer');
-    const finalTopic = isPrayerRequest ? 'prayer' : topic;
+      safeMessage.includes(keyword.toLowerCase())
+    ) || safeMessage.includes('prayer');
+    const finalTopic = isPrayerRequest ? 'prayer' : (topic || 'general');
     
     // Input validation
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -69,12 +75,12 @@ fastify.post('/ai/chat', async (request, reply) => {
       // Only keep history for short conversations
       recentHistory = (conversationHistory || []).slice(-1);
       
-      // Detect format switching and clear history to prevent confusion
-      const lastMessage = recentHistory[0];
-      isPreviousFormatDifferent = lastMessage && (
-        (isPrayerRequest && !lastMessage.content?.includes('In Jesus\' name')) ||
-        (!isPrayerRequest && lastMessage.content?.includes('In Jesus\' name'))
-      );
+          // Detect format switching and clear history to prevent confusion
+    const lastMessage = recentHistory[0];
+    isPreviousFormatDifferent = lastMessage && lastMessage.content && (
+      (isPrayerRequest && !lastMessage.content.includes('In Jesus\' name')) ||
+      (!isPrayerRequest && lastMessage.content.includes('In Jesus\' name'))
+    );
       
       // Clear history when switching between prayer and practical formats
       if (isPreviousFormatDifferent) {
@@ -157,10 +163,15 @@ fastify.post('/ai/chat', async (request, reply) => {
   } catch (error) {
     const totalTime = Date.now() - requestStart;
     fastify.log.error(`Error in AI chat (${totalTime}ms):`, error);
+    fastify.log.error(`Error stack:`, error.stack);
+    fastify.log.error(`Message:`, message);
+    fastify.log.error(`Topic:`, topic);
+    fastify.log.error(`Conversation history length:`, conversationHistory?.length || 0);
     
     return reply.code(500).send({ 
       error: 'Internal server error',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      details: error.message
     });
   }
 });
