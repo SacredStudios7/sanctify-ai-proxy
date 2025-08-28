@@ -41,6 +41,7 @@ fastify.post('/ai/chat', async (request, reply) => {
     // Auto-detect different request types
     const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
     const informationalKeywords = ['what is', 'what does', 'what are', 'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means', 'who is', 'who was', 'where is', 'when did', 'how is', 'why is', 'what happened', 'what\'s the difference'];
+    const practicalKeywords = ['how do i', 'how can i', 'help me', 'guide me', 'i need', 'i want to', 'i struggle with', 'i\'m struggling', 'advice', 'guidance', 'steps', 'overcome', 'deal with', 'handle'];
     
     const safeMessage = (message || '').toLowerCase();
     
@@ -55,28 +56,41 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     const isPrayerRequest = isPrayerCreationRequest || (containsPrayer && isNotInformational);
     
-    console.log(`🔍 PRAYER DETECTION DEBUG:`);
-    console.log(`   Message: "${safeMessage}"`);
-    console.log(`   Contains prayer/pray: ${containsPrayer}`);
-    console.log(`   Is not informational: ${isNotInformational}`);
-    console.log(`   Final isPrayerRequest: ${isPrayerRequest}`);
-    
     const isInformationalRequest = informationalKeywords.some(keyword => 
       safeMessage.includes(keyword.toLowerCase())
     );
+    
+    const isPracticalRequest = practicalKeywords.some(keyword => 
+      safeMessage.includes(keyword.toLowerCase())
+    );
+    
+    // Check if message is casual/conversational (short, greeting, typo, etc.)
+    const isCasualMessage = safeMessage.length < 10 || 
+      ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'].some(casual => safeMessage.includes(casual)) ||
+      !safeMessage.includes(' ') || // Single word
+      !/[.?!]/.test(safeMessage); // No punctuation (likely casual)
+    
+    console.log(`🔍 MESSAGE ANALYSIS DEBUG:`);
+    console.log(`   Message: "${safeMessage}" (length: ${safeMessage.length})`);
+    console.log(`   Prayer request: ${isPrayerRequest}`);
+    console.log(`   Informational request: ${isInformationalRequest}`);
+    console.log(`   Practical request: ${isPracticalRequest}`);
+    console.log(`   Casual message: ${isCasualMessage}`);
     
     let finalTopic;
     if (isPrayerRequest) {
       finalTopic = 'prayer';
     } else if (isInformationalRequest) {
       finalTopic = 'informational';
+    } else if (isPracticalRequest && !isCasualMessage) {
+      finalTopic = 'practical';
+    } else if (isCasualMessage) {
+      finalTopic = 'conversational';
     } else {
-      finalTopic = topic || 'general';
+      finalTopic = 'conversational'; // Default to conversational for anything unclear
     }
     
     console.log(`🎯 FINAL TOPIC SELECTED: "${finalTopic}"`);
-    console.log(`   Prayer request: ${isPrayerRequest}`);
-    console.log(`   Informational request: ${isInformationalRequest}`);
     
     // Input validation
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -255,6 +269,19 @@ Format: Write naturally flowing paragraphs. Include relevant Bible verses natura
 Keep it educational and informative, not prescriptive.`;
   }
   
+  if (topic === 'conversational') {
+    return `Respond naturally and conversationally with a warm, friendly, spiritual tone. Keep it brief and appropriate to what the user said:
+
+- For greetings: Respond warmly with a blessing
+- For casual comments: Acknowledge and encourage  
+- For typos/unclear: Gently ask for clarification
+- For general chat: Be supportive and spiritually encouraging
+- For thanks: Accept graciously and give glory to God
+
+Write 1-3 short sentences maximum. Be natural, not formal. Show God's love through your response.`;
+  }
+  
+  // Default to practical format for guidance requests
   return `Provide exactly 5 numbered principles. Each principle must follow this EXACT format:
 **Title**: Explanation. The Bible says, "Quote" (Verse). [Varied action starting word].
 
