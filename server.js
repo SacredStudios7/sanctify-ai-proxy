@@ -106,10 +106,10 @@ fastify.post('/ai/chat', async (request, reply) => {
         model: 'gpt-3.5-turbo',
         messages,
         max_tokens: 800, // Increased to ensure 5 full principles fit
-        temperature: 0.5, // Lower for more consistent responses
-        top_p: 0.85, // Slightly reduced for more predictable word choice
-        frequency_penalty: 0.2, // Increased to reduce repetition more
-        presence_penalty: 0.15 // Slightly reduced for more consistent structure
+        temperature: 0.7, // Slightly lower for more focused responses
+        top_p: 0.9,
+        frequency_penalty: 0.1, // Reduced to allow for more detailed explanations
+        presence_penalty: 0.2 // Increased to encourage new topics/principles
       }),
     });
     
