@@ -164,13 +164,14 @@ CRITICAL REQUIREMENTS:
 - Use transitional phrases like "reminds us", "teaches us", "instructs", "declares", "assures us"
 - Scripture references should flow naturally into the verse quote
 - Make verse introductions conversational and contextual, not generic or repetitive
+- Do NOT include verse citations in parentheses after the quote (reference is already mentioned before the verse)
 - End with one brief, encouraging sentence (NOT a paragraph or prayer) that relates to the main topic
 
 FORMATTING:
 - Use **bold** for principle titles
 - Include line breaks between points
 - Integrate verse references naturally with transitional phrases
-- End verses with proper punctuation inside quotes`;
+- End verses with proper punctuation inside quotes (no parenthetical citations)`;
 
   // Add topic-specific guidance
   if (topic) {
