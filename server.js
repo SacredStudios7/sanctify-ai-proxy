@@ -92,7 +92,14 @@ fastify.post('/ai/chat', async (request, reply) => {
     }
     
     // Build spiritual guidance system prompt
-    const systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation, isPreviousFormatDifferent);
+    let systemPrompt;
+    try {
+      systemPrompt = buildSpiritualPrompt(finalTopic, isLongConversation, isPreviousFormatDifferent);
+      fastify.log.info(`✅ System prompt built for topic: ${finalTopic}`);
+    } catch (promptError) {
+      fastify.log.error(`❌ Error building prompt:`, promptError);
+      throw new Error(`Prompt building failed: ${promptError.message}`);
+    }
     
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -100,24 +107,33 @@ fastify.post('/ai/chat', async (request, reply) => {
       { role: 'user', content: message }
     ];
     
+    fastify.log.info(`🚀 Calling OpenAI with ${messages.length} messages`);
+    
     // Call OpenAI with optimized parameters for speed
     const openaiStart = Date.now();
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages,
-        max_tokens: 800, // Increased to ensure 5 full principles fit
-        temperature: 0.7, // Slightly lower for more focused responses
-        top_p: 0.9,
-        frequency_penalty: 0.1, // Reduced to allow for more detailed explanations
-        presence_penalty: 0.2 // Increased to encourage new topics/principles
-      }),
-    });
+    let response;
+    try {
+      response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-3.5-turbo',
+          messages,
+          max_tokens: 800, // Increased to ensure 5 full principles fit
+          temperature: 0.7, // Slightly lower for more focused responses
+          top_p: 0.9,
+          frequency_penalty: 0.1, // Reduced to allow for more detailed explanations
+          presence_penalty: 0.2 // Increased to encourage new topics/principles
+        }),
+      });
+      fastify.log.info(`📡 OpenAI API call completed in ${Date.now() - openaiStart}ms`);
+    } catch (fetchError) {
+      fastify.log.error(`❌ OpenAI API fetch error:`, fetchError);
+      throw new Error(`OpenAI API call failed: ${fetchError.message}`);
+    }
     
     const networkTime = Date.now() - openaiStart;
     
@@ -131,16 +147,26 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     // Parse response
     const parseStart = Date.now();
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+      fastify.log.info(`✅ Response parsed successfully`);
+    } catch (parseError) {
+      fastify.log.error(`❌ Error parsing OpenAI response:`, parseError);
+      throw new Error(`Response parsing failed: ${parseError.message}`);
+    }
     const parseTime = Date.now() - parseStart;
     
     const content = data.choices?.[0]?.message?.content;
     if (!content) {
-      fastify.log.error('No content in OpenAI response');
+      fastify.log.error('❌ No content in OpenAI response:', data);
       return reply.code(500).send({ 
         error: 'No response generated' 
       });
     }
+    
+    fastify.log.info(`✅ Content extracted, length: ${content.length}`);
+    
     
     // Performance timing
     const totalTime = Date.now() - requestStart;
@@ -148,7 +174,20 @@ fastify.post('/ai/chat', async (request, reply) => {
     fastify.log.info(`⚡ TIMING - Network: ${networkTime}ms, Parse: ${parseTime}ms, Total: ${totalTime}ms`);
     
     // Parse and structure the response
-    const structuredResponse = parseAIResponse(content);
+    let structuredResponse;
+    try {
+      structuredResponse = parseAIResponse(content);
+      fastify.log.info(`✅ Response structured successfully`);
+    } catch (structureError) {
+      fastify.log.error(`❌ Error structuring response:`, structureError);
+      // Return basic response if structuring fails
+      structuredResponse = {
+        content: content.trim(),
+        verseReferences: [],
+        contentType: 'spiritual_guidance',
+        formattedAt: new Date().toISOString()
+      };
+    }
     
     return reply.send({
       ...structuredResponse,
