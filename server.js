@@ -183,25 +183,18 @@ Write a conversational prayer with:
     basePrompt += `
 
 THIS IS A PRACTICAL GUIDANCE REQUEST:
-Format exactly like this:
 
-[Encouraging opening sentence about the topic]
+YOU MUST COPY THIS EXACT FORMAT. DO NOT DEVIATE:
 
-1. **Principle Title**: Explanation of the principle concept. Bible verse reference says, "direct quote from Scripture." Action step for the reader.
+[Opening sentence]
 
-2. **Principle Title**: Explanation of the principle concept. Bible verse reference advises, "direct quote from Scripture." Action step for the reader.
+1. **Title**: Explanation. John 3:16 says, "Quote." Action.
+2. **Title**: Explanation. Romans 8:28 says, "Quote." Action.  
+3. **Title**: Explanation. Philippians 4:13 says, "Quote." Action.
+4. **Title**: Explanation. Psalm 23:1 says, "Quote." Action.
+5. **Title**: Explanation. Proverbs 3:5 says, "Quote." Action.
 
-3. **Principle Title**: Explanation of the principle concept. Bible verse reference instructs, "direct quote from Scripture." Action step for the reader.
-
-4. **Principle Title**: Explanation of the principle concept. Bible verse reference encourages us to, "direct quote from Scripture." Action step for the reader.
-
-5. **Principle Title**: Explanation of the principle concept. Bible verse reference tells us, "direct quote from Scripture." Action step for the reader.
-
-Requirements:
-- MUST provide exactly 5 numbered principles
-- Each principle MUST include a Bible verse reference with actual Scripture quote
-- Use transition words: says, advises, instructs, encourages, tells us, etc.
-- Each principle needs a practical action step`;
+CRITICAL: Every principle MUST use "[Verse] says, 'Quote.'" - NO other words like "reminds", "states", "teaches", "instructs". ONLY "says".`;
   }
 
   return basePrompt;
