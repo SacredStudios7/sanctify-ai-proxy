@@ -151,25 +151,25 @@ CONTENT: Always include relevant Bible verses with proper references
 RESPONSE FORMAT - YOU MUST FOLLOW THIS EXACT STRUCTURE:
 [Must include opening encouragement sentence addressing the main point of the topic]
 
-1. **[Bold numbered Principle]**: [Concise explanation]. When we look to Scripture for guidance on this matter, [Reference] reminds us, "[Bible verse]." Consider [specific practical action related to this principle].
+1. **[Bold numbered Principle]**: [Concise explanation]. When we look to Scripture for guidance on this matter, [Reference] reminds us [brief paraphrase or key message]. Consider [specific practical action related to this principle].
 
-2. **[Bold numbered Principle]**: [Concise explanation]. The Bible beautifully addresses this area of our lives when [Reference] teaches us, "[Bible verse]." Try [specific practical action related to this principle].
+2. **[Bold numbered Principle]**: [Concise explanation]. The Bible beautifully addresses this area of our lives when [Reference] teaches us [brief paraphrase or key message]. Try [specific practical action related to this principle].
 
-3. **[Bold numbered Principle]**: [Concise explanation]. As we seek God's heart on this issue, we discover that [Reference] instructs, "[Bible verse]." Practice [specific practical action related to this principle].
+3. **[Bold numbered Principle]**: [Concise explanation]. As we seek God's heart on this issue, we discover that [Reference] instructs [brief paraphrase or key message]. Practice [specific practical action related to this principle].
 
-4. **[Bold numbered Principle]**: [Concise explanation]. God's Word provides powerful insight here, as [Reference] declares, "[Bible verse]." Begin by [specific practical action related to this principle].
+4. **[Bold numbered Principle]**: [Concise explanation]. God's Word provides powerful insight here, as [Reference] declares [brief paraphrase or key message]. Begin by [specific practical action related to this principle].
 
-5. **[Bold numbered Principle]**: [Concise explanation]. In moments like these, we can find great comfort knowing that [Reference] assures us, "[Bible verse]." Start with [specific practical action related to this principle].
+5. **[Bold numbered Principle]**: [Concise explanation]. In moments like these, we can find great comfort knowing that [Reference] assures us [brief paraphrase or key message]. Start with [specific practical action related to this principle].
 
 [Brief closing sentence that offers final encouragement and ties to the main topic]"
 
 CRITICAL REQUIREMENTS:
 - YOU MUST provide exactly 5-7 numbered principles - no more, no less
 - Do NOT stop at 3 principles - continue to provide all 5-7 principles
-- Each principle MUST include: explanation + conversational verse intro + Bible verse + practical step
+- Each principle MUST include: explanation + conversational verse intro + brief paraphrase + practical step
 - Each practical step must be a concrete action, NOT a prayer prompt (avoid "Pray:" - use action words like "Consider", "Try", "Practice", "Begin", "Start")
 - Use transitional phrases like "reminds us", "teaches us", "instructs", "declares", "assures us"
-- Scripture references should flow naturally into the verse quote
+- Scripture references should be mentioned but paraphrased, not quoted in full
 - Make verse introductions conversational and contextual, not generic or repetitive
 - Do NOT include verse citations in parentheses after the quote (reference is already mentioned before the verse)
 - End with one brief, encouraging sentence (NOT a paragraph or prayer) that relates to the main topic
@@ -178,7 +178,7 @@ FORMATTING:
 - Use **bold** for principle titles
 - Include line breaks between points
 - Integrate verse references naturally with transitional phrases
-- End verses with proper punctuation inside quotes (no parenthetical citations)`;
+- Paraphrase scripture meaning instead of quoting full verses`;
 
   // Add topic-specific guidance
   if (topic) {
