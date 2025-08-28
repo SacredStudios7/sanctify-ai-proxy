@@ -194,15 +194,21 @@ function buildSpiritualPrompt(topic) {
     return `Write a prayer with opening sentence, two paragraphs, end with "In Jesus' name, Amen."`;
   }
   
-  return `Provide exactly 5 numbered principles. Each principle must follow this format:
-**Title**: Explanation. The Bible says, "Quote" (Verse). [Seamless action sentence starting with words like: Consider, Try, Practice, Begin, Start, Focus on, etc.]
+  return `Provide exactly 5 numbered principles. Each principle must follow this EXACT format:
+**Title**: Explanation. The Bible says, "Quote" (Verse). Consider taking specific action.
+
+CRITICAL: NEVER write "Action step:" - make the action flow naturally after the verse.
+
+Examples of correct format:
+**Trust God**: Explanation here. The Bible says, "Quote" (Romans 8:28). Consider starting each day with prayer.
+**Have Faith**: Explanation here. The Bible says, "Quote" (Hebrews 11:1). Try reading Scripture daily.
 
 Format:
 1. Start with encouraging opening sentence
 2. Provide exactly 5 numbered principles in the format above  
 3. End with encouraging conclusion paragraph
 
-The action sentences should flow naturally without labels - use action words like "Consider taking time to...", "Try implementing this by...", "Practice this daily through...", "Begin by focusing on...", etc.`;
+FORBIDDEN: Never use "Action step:", "Practical step:", or any labels before actions.`;
 }
 
 // Topic-specific guidance
