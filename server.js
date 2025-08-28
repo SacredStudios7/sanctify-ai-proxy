@@ -38,13 +38,28 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     const { message, conversationHistory = [], topic } = request.body;
     
-    // Auto-detect prayer CREATION requests (not prayer topics)
+    // Auto-detect different request types
     const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
+    const informationalKeywords = ['what is', 'what does', 'what are', 'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means', 'who is', 'who was', 'where is', 'when did', 'how is', 'why is', 'what happened', 'what\'s the difference'];
+    
     const safeMessage = (message || '').toLowerCase();
+    
     const isPrayerCreationRequest = prayerCreationKeywords.some(keyword => 
       safeMessage.includes(keyword.toLowerCase())
     );
-    const finalTopic = isPrayerCreationRequest ? 'prayer' : (topic || 'general');
+    
+    const isInformationalRequest = informationalKeywords.some(keyword => 
+      safeMessage.includes(keyword.toLowerCase())
+    );
+    
+    let finalTopic;
+    if (isPrayerCreationRequest) {
+      finalTopic = 'prayer';
+    } else if (isInformationalRequest) {
+      finalTopic = 'informational';
+    } else {
+      finalTopic = topic || 'general';
+    }
     
     // Input validation
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -199,6 +214,18 @@ fastify.post('/ai/chat', async (request, reply) => {
 function buildSpiritualPrompt(topic) {
   if (topic === 'prayer') {
     return `Write a prayer with opening sentence, two paragraphs, end with "In Jesus' name, Amen."`;
+  }
+  
+  if (topic === 'informational') {
+    return `Provide a clear, educational explanation in exactly 3 paragraphs:
+
+1. First paragraph: Direct answer and basic definition/explanation
+2. Second paragraph: Biblical context and relevant Scripture references  
+3. Third paragraph: Significance and why this matters for Christians today
+
+Format: Write naturally flowing paragraphs. Include relevant Bible verses naturally within the text. No numbered lists, no practical steps, no action items - just clear, informative explanation.
+
+Keep it educational and informative, not prescriptive.`;
   }
   
   return `Provide exactly 5 numbered principles. Each principle must follow this EXACT format:
