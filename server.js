@@ -183,17 +183,25 @@ Write a conversational prayer with:
     basePrompt += `
 
 THIS IS A PRACTICAL GUIDANCE REQUEST:
-Start with an encouraging opening sentence, then provide 5-7 numbered principles.
+Format exactly like this:
 
-Format for each principle:
-**Title**: Brief explanation. [Bible verse like "Romans 8:28"] reminds us [meaning]. Try [practical action].
+[Encouraging opening sentence about the topic]
+
+1. **Principle Title**: Explanation of the principle concept. Bible verse reference says, "direct quote from Scripture." Action step for the reader.
+
+2. **Principle Title**: Explanation of the principle concept. Bible verse reference advises, "direct quote from Scripture." Action step for the reader.
+
+3. **Principle Title**: Explanation of the principle concept. Bible verse reference instructs, "direct quote from Scripture." Action step for the reader.
+
+4. **Principle Title**: Explanation of the principle concept. Bible verse reference encourages us to, "direct quote from Scripture." Action step for the reader.
+
+5. **Principle Title**: Explanation of the principle concept. Bible verse reference tells us, "direct quote from Scripture." Action step for the reader.
 
 Requirements:
-- MUST start with encouraging opening sentence
-- MUST provide 5-7 numbered principles  
-- EVERY principle MUST include a Bible verse reference
-- Use verses like: Romans 8:28, John 3:16, Philippians 4:13, Psalm 23:1, etc.
-- End with brief encouraging sentence`;
+- MUST provide exactly 5 numbered principles
+- Each principle MUST include a Bible verse reference with actual Scripture quote
+- Use transition words: says, advises, instructs, encourages, tells us, etc.
+- Each principle needs a practical action step`;
   }
 
   return basePrompt;
