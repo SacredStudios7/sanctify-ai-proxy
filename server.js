@@ -38,12 +38,22 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     const { message, conversationHistory = [], topic } = request.body;
     
-    // Auto-detect different request types
-    const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
-    const informationalKeywords = ['what is', 'what does', 'what are', 'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means', 'who is', 'who was', 'where is', 'when did', 'how is', 'why is', 'what happened', 'what\'s the difference'];
-    const practicalKeywords = ['how do i', 'how can i', 'help me', 'guide me', 'i need', 'i want to', 'i struggle with', 'i\'m struggling', 'advice', 'guidance', 'steps', 'overcome', 'deal with', 'handle'];
+    // Input validation first
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      return reply.code(400).send({ 
+        error: 'Message is required and must be a non-empty string' 
+      });
+    }
     
-    const safeMessage = (message || '').toLowerCase();
+    let finalTopic = 'conversational'; // Default
+    
+    try {
+      // Auto-detect different request types
+      const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
+      const informationalKeywords = ['what is', 'what does', 'what are', 'explain', 'define', 'tell me about', 'what\'s the meaning', 'what means', 'who is', 'who was', 'where is', 'when did', 'how is', 'why is', 'what happened', 'what\'s the difference'];
+      const practicalKeywords = ['how do i', 'how can i', 'help me', 'guide me', 'i need', 'i want to', 'i struggle with', 'i\'m struggling', 'advice', 'guidance', 'steps', 'overcome', 'deal with', 'handle'];
+      
+      const safeMessage = (message || '').toLowerCase();
     
     // Detect explicit prayer creation requests
     const isPrayerCreationRequest = prayerCreationKeywords.some(keyword => 
@@ -65,10 +75,13 @@ fastify.post('/ai/chat', async (request, reply) => {
     );
     
     // Check if message is casual/conversational (short, greeting, typo, etc.)
-    const isCasualMessage = safeMessage.length < 10 || 
-      ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'].some(casual => safeMessage.includes(casual)) ||
-      !safeMessage.includes(' ') || // Single word
-      !/[.?!]/.test(safeMessage); // No punctuation (likely casual)
+    const casualWords = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'];
+    const containsCasualWord = casualWords.some(word => safeMessage.includes(word));
+    const isShortMessage = safeMessage.length < 10;
+    const isSingleWord = !safeMessage.includes(' ');
+    const hasNoPunctuation = !/[.?!]/.test(safeMessage);
+    
+    const isCasualMessage = isShortMessage || containsCasualWord || isSingleWord || hasNoPunctuation;
     
     console.log(`🔍 MESSAGE ANALYSIS DEBUG:`);
     console.log(`   Message: "${safeMessage}" (length: ${safeMessage.length})`);
@@ -77,7 +90,6 @@ fastify.post('/ai/chat', async (request, reply) => {
     console.log(`   Practical request: ${isPracticalRequest}`);
     console.log(`   Casual message: ${isCasualMessage}`);
     
-    let finalTopic;
     if (isPrayerRequest) {
       finalTopic = 'prayer';
     } else if (isInformationalRequest) {
@@ -92,11 +104,10 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     console.log(`🎯 FINAL TOPIC SELECTED: "${finalTopic}"`);
     
-    // Input validation
-    if (!message || typeof message !== 'string' || message.trim().length === 0) {
-      return reply.code(400).send({ 
-        error: 'Message is required and must be a non-empty string' 
-      });
+    } catch (detectionError) {
+      console.error('Error in message detection:', detectionError);
+      // Default to conversational format if detection fails
+      finalTopic = 'conversational';
     }
     
     if (message.length > 2000) {
