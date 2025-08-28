@@ -50,8 +50,16 @@ fastify.post('/ai/chat', async (request, reply) => {
     );
     
     // Detect any prayer request (broader detection)
-    const isPrayerRequest = isPrayerCreationRequest || 
-      (safeMessage.includes('prayer') && !safeMessage.includes('what is prayer') && !safeMessage.includes('explain prayer') && !safeMessage.includes('define prayer'));
+    const containsPrayer = safeMessage.includes('prayer') || safeMessage.includes('pray');
+    const isNotInformational = !safeMessage.includes('what is prayer') && !safeMessage.includes('explain prayer') && !safeMessage.includes('define prayer') && !safeMessage.includes('what does prayer') && !safeMessage.includes('what is pray');
+    
+    const isPrayerRequest = isPrayerCreationRequest || (containsPrayer && isNotInformational);
+    
+    console.log(`🔍 PRAYER DETECTION DEBUG:`);
+    console.log(`   Message: "${safeMessage}"`);
+    console.log(`   Contains prayer/pray: ${containsPrayer}`);
+    console.log(`   Is not informational: ${isNotInformational}`);
+    console.log(`   Final isPrayerRequest: ${isPrayerRequest}`);
     
     const isInformationalRequest = informationalKeywords.some(keyword => 
       safeMessage.includes(keyword.toLowerCase())
@@ -65,6 +73,10 @@ fastify.post('/ai/chat', async (request, reply) => {
     } else {
       finalTopic = topic || 'general';
     }
+    
+    console.log(`🎯 FINAL TOPIC SELECTED: "${finalTopic}"`);
+    console.log(`   Prayer request: ${isPrayerRequest}`);
+    console.log(`   Informational request: ${isInformationalRequest}`);
     
     // Input validation
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -218,7 +230,17 @@ fastify.post('/ai/chat', async (request, reply) => {
 // Simple prompt that works
 function buildSpiritualPrompt(topic) {
   if (topic === 'prayer') {
-    return `Write a prayer with opening sentence, two paragraphs, end with "In Jesus' name, Amen."`;
+    return `CRITICAL: This is a PRAYER REQUEST - Write ONLY a prayer in this exact format:
+
+[One opening sentence about the prayer topic]
+
+[First prayer paragraph - speak directly to God]
+
+[Second prayer paragraph - continue speaking to God]
+
+In Jesus' name, Amen.
+
+FORBIDDEN: Do NOT use numbered lists, principles, or practical steps. This must be a flowing prayer speaking TO God, not about God.`;
   }
   
   if (topic === 'informational') {
