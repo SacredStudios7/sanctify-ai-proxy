@@ -73,10 +73,10 @@ fastify.post('/ai/chat', async (request, reply) => {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages,
-        max_tokens: 600,
-        temperature: 0.7,
+        max_tokens: 600, // Keep at 600 for complete responses
+        temperature: 0.8,
         top_p: 0.9,
-        frequency_penalty: 0.1,
+        frequency_penalty: 0.2,
         presence_penalty: 0.1
       }),
     });
