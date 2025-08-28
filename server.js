@@ -74,25 +74,42 @@ fastify.post('/ai/chat', async (request, reply) => {
       safeMessage.includes(keyword.toLowerCase())
     );
     
-          // Check if message is casual/conversational (short, greeting, typo, etc.)
-      const casualWords = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'];
-      const containsCasualWord = casualWords.some(word => safeMessage.includes(word));
-      const isVeryShortMessage = safeMessage.length < 6; // Made more restrictive
-      const isSingleWord = !safeMessage.includes(' ') && safeMessage.length < 8; // More restrictive for single words
-      
-      // Only consider casual if it's VERY clearly casual - not just missing punctuation
-      const isCasualMessage = isVeryShortMessage || containsCasualWord || isSingleWord;
+              // Detect if user needs practical help (contextual analysis)
+    const needsHelpIndicators = [
+      'i need', 'i keep', 'i cant', 'i can\'t', 'i dont', 'i don\'t', 'i struggle', 'i\'m struggling', 
+      'help me', 'struggling with', 'dealing with', 'having trouble', 'keep falling', 'keep failing',
+      'dont know what to do', 'don\'t know what to do', 'need guidance', 'need advice', 'need help',
+      'falling into', 'addicted to', 'overcome', 'stop doing', 'break free', 'get rid of'
+    ];
+    
+    const spiritualStruggles = [
+      'sin', 'lust', 'temptation', 'anxiety', 'depression', 'fear', 'worry', 'anger', 'pride',
+      'addiction', 'doubt', 'faith', 'prayer', 'bible', 'god', 'jesus', 'spiritual', 'christian'
+    ];
+    
+    const indicatesNeedForHelp = needsHelpIndicators.some(indicator => safeMessage.includes(indicator));
+    const isSpiritualContext = spiritualStruggles.some(struggle => safeMessage.includes(struggle));
+    
+    // Check if message is casual/conversational (very restrictive now)
+    const casualWords = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'okay', 'yes', 'no', 'good', 'great', 'awesome', 'cool', 'nice', 'wow', 'amen', 'bless', 'ke', 'k', 'lol', 'haha'];
+    const containsCasualWord = casualWords.some(word => safeMessage.includes(word));
+    const isVeryShortMessage = safeMessage.length < 6;
+    const isSingleWord = !safeMessage.includes(' ') && safeMessage.length < 8;
+    
+    // Only consider casual if it's VERY clearly casual AND not a spiritual need
+    const isCasualMessage = (isVeryShortMessage || containsCasualWord || isSingleWord) && !indicatesNeedForHelp && !isSpiritualContext;
     
     console.log(`🔍 MESSAGE ANALYSIS DEBUG:`);
     console.log(`   Message: "${safeMessage}" (length: ${safeMessage.length})`);
     console.log(`   Prayer request: ${isPrayerRequest}`);
     console.log(`   Informational request: ${isInformationalRequest}`);
-    console.log(`   Casual details:`);
-    console.log(`     - Very short (< 6 chars): ${isVeryShortMessage}`);
+    console.log(`   Contextual analysis:`);
+    console.log(`     - Indicates need for help: ${indicatesNeedForHelp}`);
+    console.log(`     - Spiritual context: ${isSpiritualContext}`);
     console.log(`     - Contains casual word: ${containsCasualWord}`);
-    console.log(`     - Single word (< 8 chars): ${isSingleWord}`);
+    console.log(`     - Very short message: ${isVeryShortMessage}`);
     console.log(`     - Final casual result: ${isCasualMessage}`);
-    console.log(`   -> Will default to PRACTICAL for spiritual questions`);
+    console.log(`   -> Will prioritize PRACTICAL for users expressing spiritual needs`);
     
     if (isPrayerRequest) {
       finalTopic = 'prayer';
