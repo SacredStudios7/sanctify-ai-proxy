@@ -31,13 +31,13 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     const { message, conversationHistory = [], topic } = request.body;
     
-    // Auto-detect prayer requests with safety checks
-    const prayerKeywords = ['create a prayer', 'make a prayer', 'pray for', 'write a prayer', 'prayer for', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'help me pray'];
+    // Auto-detect prayer CREATION requests (not prayer topics)
+    const prayerCreationKeywords = ['create a prayer', 'make a prayer', 'write a prayer', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'generate a prayer', 'help me pray'];
     const safeMessage = (message || '').toLowerCase();
-    const isPrayerRequest = prayerKeywords.some(keyword => 
+    const isPrayerCreationRequest = prayerCreationKeywords.some(keyword => 
       safeMessage.includes(keyword.toLowerCase())
-    ) || safeMessage.includes('prayer');
-    const finalTopic = isPrayerRequest ? 'prayer' : (topic || 'general');
+    );
+    const finalTopic = isPrayerCreationRequest ? 'prayer' : (topic || 'general');
     
     // Input validation
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -197,7 +197,12 @@ function buildSpiritualPrompt(topic) {
   return `Provide exactly 5 numbered principles. Each principle must follow this format:
 **Title**: Explanation. The Bible says, "Quote" (Verse). Action step.
 
-Start with encouraging sentence, then 5 principles exactly like the format above.`;
+Format:
+1. Start with encouraging opening sentence
+2. Provide exactly 5 numbered principles in the format above  
+3. End with encouraging conclusion paragraph
+
+Always include the conclusion paragraph at the end.`;
 }
 
 // Topic-specific guidance
