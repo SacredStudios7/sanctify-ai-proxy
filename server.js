@@ -1,4 +1,11 @@
 require('dotenv').config();
+
+// Validate environment variables on startup
+if (!process.env.OPENAI_API_KEY) {
+  console.error('❌ CRITICAL: OPENAI_API_KEY environment variable is not set');
+  process.exit(1);
+}
+
 const fastify = require('fastify')({ 
   logger: true,
   trustProxy: true 
@@ -283,12 +290,19 @@ const start = async () => {
     const port = process.env.PORT || 3001;
     const host = process.env.HOST || '0.0.0.0';
     
+    console.log('🔧 Starting Sanctify AI Proxy...');
+    console.log(`🔑 OpenAI API Key: ${process.env.OPENAI_API_KEY ? 'Present' : 'Missing'}`);
+    console.log(`📡 Port: ${port}, Host: ${host}`);
+    
     await fastify.listen({ port: parseInt(port), host });
+    
+    console.log('✅ Server started successfully!');
     fastify.log.info(`🚀 Sanctify AI Proxy running on ${host}:${port}`);
     fastify.log.info(`🔗 Health check: http://${host}:${port}/health`);
     fastify.log.info(`🤖 AI endpoint: http://${host}:${port}/ai/chat`);
     
   } catch (err) {
+    console.error('❌ Error starting server:', err);
     fastify.log.error('Error starting server:', err);
     process.exit(1);
   }
