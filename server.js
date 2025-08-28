@@ -27,10 +27,10 @@ fastify.post('/ai/chat', async (request, reply) => {
     const { message, conversationHistory = [], topic } = request.body;
     
     // Auto-detect prayer requests
-    const prayerKeywords = ['create a prayer', 'make a prayer', 'pray for', 'write a prayer', 'prayer for', 'create me a prayer'];
+    const prayerKeywords = ['create a prayer', 'make a prayer', 'pray for', 'write a prayer', 'prayer for', 'create me a prayer', 'create me an', 'write me a prayer', 'make me a prayer', 'help me pray'];
     const isPrayerRequest = prayerKeywords.some(keyword => 
       message.toLowerCase().includes(keyword.toLowerCase())
-    );
+    ) || message.toLowerCase().includes('prayer');
     const finalTopic = isPrayerRequest ? 'prayer' : topic;
     
     // Input validation
@@ -188,7 +188,11 @@ FORMATTING:
     }
   }
 
-  basePrompt += `\n\nREMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles.`;
+  if (topic === 'prayer') {
+    basePrompt += `\n\nCRITICAL PRAYER FORMAT REMINDER: This is a PRAYER REQUEST. Do NOT use numbered principles. Use ONLY the prayer format: opening sentence + two prayer paragraphs + "In Jesus' name, Amen."`;
+  } else {
+    basePrompt += `\n\nREMINDER: Your response must contain exactly 5-7 numbered principles with detailed explanations and verse introductions. Do not stop at 3 principles.`;
+  }
 
   return basePrompt;
 }
@@ -205,7 +209,7 @@ function getTopicGuidance(topic) {
     'relationships': 'Focus on biblical relationships, love, and community. Use 1 Corinthians 13, Ephesians 4:32.',
     'struggles': 'Emphasize God\'s strength in weakness and perseverance. Use 2 Corinthians 12:9, Romans 8:28.',
     'gratitude': 'Focus on thankfulness, praise, and recognizing God\'s blessings. Use 1 Thessalonians 5:18, Psalm 103.',
-    'prayer': 'SPECIAL FORMAT: Use prayer format instead of principles. Provide: [Opening sentence introducing the prayer] + [First prayer paragraph - 3-4 sentences addressing the main request] + [Second prayer paragraph - 3-4 sentences with thanksgiving/blessings] + End with "In Jesus\' name, Amen."'
+    'prayer': 'CRITICAL: This is a PRAYER REQUEST - DO NOT USE NUMBERED PRINCIPLES FORMAT. ONLY use prayer format: [Opening sentence introducing the prayer] + [First prayer paragraph - 3-4 sentences addressing the main request] + [Second prayer paragraph - 3-4 sentences with thanksgiving/blessings] + End with "In Jesus\' name, Amen." NO NUMBERED SECTIONS OR VERSES.'
   };
   
   return topicMap[topic] || '';
