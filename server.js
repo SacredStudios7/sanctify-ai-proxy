@@ -329,7 +329,7 @@ Use this structure when the user asks questions like 'Do I need God?', 'What is 
   - **Bold the entire point title**, e.g., **1. Obedience:**
   - Each point must be 2–4 sentences long
   - Include a relevant Bible verse with the **full text of the verse quoted directly** inside the paragraph
-  - Style the verse reference in **bold and navy**, like this: **John 14:15**
+  - Style the verse reference in bold and navy, like this: John 14:15
   - Do not use markdown asterisks (\`**John 14:15**\`) — only render as styled bold navy
   - Never show just the reference alone; always include the full verse content inside the same paragraph
   - Do not use quote blocks, sub-points, or stylized breaks
