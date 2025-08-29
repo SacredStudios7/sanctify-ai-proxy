@@ -350,9 +350,9 @@ Be natural, encouraging, and biblically grounded. Show God's love through your r
   }
   
   // Default to practical format for guidance requests
-  return `Provide exactly 5 numbered principles with proper spacing. Each principle must follow this EXACT format:
+  return `Provide exactly 5 numbered principles with proper spacing. Format:
 
-[Encouraging opening sentence]
+Write an encouraging opening sentence about the topic.
 
 1. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
 
@@ -364,7 +364,9 @@ Be natural, encouraging, and biblically grounded. Show God's love through your r
 
 5. **Title**: Explanation. The Bible says, "Quote" (Verse). Action.
 
-[Encouraging conclusion paragraph]
+Write an encouraging conclusion paragraph to close the response.
+
+CRITICAL: Do NOT write template placeholders like "[Encouraging opening sentence]" - write actual encouraging content.
 
 CRITICAL SPACING: Each numbered principle MUST be separated by a blank line. Do not run principles together.
 
