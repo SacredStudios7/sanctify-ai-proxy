@@ -143,7 +143,7 @@ fastify.post('/ai/chat', async (request, reply) => {
     if (finalTopic === 'prayer') {
       console.log(`   → PRAYER: Opening + 2 paragraphs + "In Jesus' name, Amen"`);
     } else if (finalTopic === 'informational') {
-      console.log(`   → INFORMATIONAL: 3 educational paragraphs with biblical context`);
+      console.log(`   → INFORMATIONAL: 2 educational paragraphs with biblical context`);
     } else if (finalTopic === 'conversational') {
       console.log(`   → CONVERSATIONAL: 1-3 brief, friendly sentences`);
     } else if (finalTopic === 'practical') {
@@ -323,11 +323,10 @@ FORBIDDEN: Do NOT use numbered lists, principles, or practical steps. This must 
   }
   
   if (topic === 'informational') {
-    return `Provide a clear, educational explanation in exactly 3 paragraphs:
+    return `Provide a clear, educational explanation in exactly 2 paragraphs:
 
-1. First paragraph: Direct answer and basic definition/explanation
-2. Second paragraph: Biblical context and relevant Scripture references  
-3. Third paragraph: Significance and why this matters for Christians today
+1. First paragraph: Direct answer with Scripture references and basic explanation
+2. Second paragraph: Biblical context and significance for Christians today
 
 Format: Write naturally flowing paragraphs. Include relevant Bible verses naturally within the text. No numbered lists, no practical steps, no action items - just clear, informative explanation.
 
