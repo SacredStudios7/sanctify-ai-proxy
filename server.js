@@ -67,6 +67,7 @@ fastify.post('/ai/chat', async (request, reply) => {
         'where in the bible', 'where does the bible', 'what verse', 'which verse',
         'scripture says', 'bible verse about', 'biblical', 'according to scripture',
         'give me a passage', 'give me a verse', 'show me a verse', 'find me a verse',
+        'give me a random', 'random verse', 'random passage', 'any verse', 'share a verse',
         'passage from', 'verse from', 'scripture from', 'bible passage about',
         // Theological questions (often structured as "do/does/will/can" questions)
         'do my', 'does my', 'will my', 'can my', 'do i get', 'does god', 'will god',
