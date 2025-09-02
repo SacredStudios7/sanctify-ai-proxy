@@ -21,7 +21,7 @@ fastify.register(require('@fastify/cors'), {
 const RATE_LIMITS = {
   windowMs: 2 * 60 * 1000, // 2 minutes
   maxRequests: 20, // 20 requests per window
-  dailyLimit: 5, // 5 requests per day (TESTING ONLY)
+  dailyLimit: 75, // 75 requests per day
   dailyCostLimit: 700 // $7.00 daily cost limit (in cents)
 };
 
