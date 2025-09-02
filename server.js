@@ -17,12 +17,161 @@ fastify.register(require('@fastify/cors'), {
   methods: ['GET', 'POST', 'OPTIONS']
 });
 
+// Rate limiting configuration - 20 requests per 2 minutes
+const RATE_LIMITS = {
+  windowMs: 2 * 60 * 1000, // 2 minutes
+  maxRequests: 20, // 20 requests per window
+  dailyLimit: 75, // 75 requests per day
+  dailyCostLimit: 700 // $7.00 daily cost limit (in cents)
+};
+
+// In-memory rate limiting store
+const rateLimitStore = new Map(); // Format: userId -> { windowStart, requests, dailyRequests, dailyCost }
+
+/**
+ * Check and update rate limits for a user
+ */
+function checkRateLimit(userId) {
+  const now = Date.now();
+  const windowStart = Math.floor(now / RATE_LIMITS.windowMs) * RATE_LIMITS.windowMs;
+  const dailyStart = Math.floor(now / (24 * 60 * 60 * 1000)) * (24 * 60 * 60 * 1000);
+  
+  const userKey = userId || 'anonymous';
+  let userData = rateLimitStore.get(userKey) || {
+    windowStart: 0,
+    requests: 0,
+    dailyStart: 0,
+    dailyRequests: 0,
+    dailyCost: 0
+  };
+  
+  // Reset window if it's a new time window
+  if (windowStart > userData.windowStart) {
+    userData.windowStart = windowStart;
+    userData.requests = 0;
+  }
+  
+  // Reset daily counters if it's a new day
+  if (dailyStart > userData.dailyStart) {
+    userData.dailyStart = dailyStart;
+    userData.dailyRequests = 0;
+    userData.dailyCost = 0;
+  }
+  
+  console.log(`📊 Rate limit check for ${userKey}:`);
+  console.log(`   Window: ${userData.requests}/${RATE_LIMITS.maxRequests} requests`);
+  console.log(`   Daily: ${userData.dailyRequests}/${RATE_LIMITS.dailyLimit} requests, $${userData.dailyCost/100} cost`);
+  
+  // Check per-minute rate limit
+  if (userData.requests >= RATE_LIMITS.maxRequests) {
+    const remainingTime = Math.ceil((windowStart + RATE_LIMITS.windowMs - now) / 1000);
+    console.log(`🚫 BLOCKING REQUEST: Rate limit exceeded (${userData.requests + 1} > ${RATE_LIMITS.maxRequests})`);
+    return {
+      allowed: false,
+      error: `You're sending messages too quickly! Please wait ${Math.ceil(remainingTime/60)} minutes before trying again.`,
+      rateLimitExceeded: true,
+      retryAfter: remainingTime
+    };
+  }
+  
+  // Check daily request limit
+  if (userData.dailyRequests >= RATE_LIMITS.dailyLimit) {
+    console.log(`🚫 BLOCKING REQUEST: Daily limit exceeded (${userData.dailyRequests + 1} > ${RATE_LIMITS.dailyLimit})`);
+    return {
+      allowed: false,
+      error: `You've reached your daily message limit of ${RATE_LIMITS.dailyLimit} requests. Please come back tomorrow!`,
+      dailyLimitExceeded: true
+    };
+  }
+  
+  // Check daily cost limit (estimate ~9 cents per request)
+  const estimatedCost = 9; // cents per request
+  if (userData.dailyCost + estimatedCost > RATE_LIMITS.dailyCostLimit) {
+    console.log(`🚫 BLOCKING REQUEST: Daily cost limit exceeded ($${(userData.dailyCost + estimatedCost)/100} > $${RATE_LIMITS.dailyCostLimit/100})`);
+    return {
+      allowed: false,
+      error: `Daily usage limit reached. Please come back tomorrow!`,
+      dailyLimitExceeded: true
+    };
+  }
+  
+  // Increment counters
+  userData.requests++;
+  userData.dailyRequests++;
+  userData.dailyCost += estimatedCost;
+  
+  // Store updated data
+  rateLimitStore.set(userKey, userData);
+  
+  console.log(`✅ Request allowed. New counts: ${userData.requests}/${RATE_LIMITS.maxRequests} window, ${userData.dailyRequests}/${RATE_LIMITS.dailyLimit} daily`);
+  
+  return { allowed: true };
+}
+
+// Cleanup old rate limit data every hour
+setInterval(() => {
+  const now = Date.now();
+  const oneHourAgo = now - (60 * 60 * 1000);
+  
+  for (const [userId, userData] of rateLimitStore.entries()) {
+    // Remove data older than 1 hour and not from today
+    if (userData.windowStart < oneHourAgo && userData.dailyStart < oneHourAgo) {
+      rateLimitStore.delete(userId);
+      console.log(`🧹 Cleaned up old rate limit data for user: ${userId}`);
+    }
+  }
+  
+  console.log(`🧹 Rate limit cleanup completed. Active users: ${rateLimitStore.size}`);
+}, 60 * 60 * 1000); // Run every hour
+
 // Health check endpoint
 fastify.get('/health', async (request, reply) => {
   return { 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
+    rateLimiting: {
+      enabled: true,
+      activeUsers: rateLimitStore.size,
+      windowMs: RATE_LIMITS.windowMs,
+      maxRequests: RATE_LIMITS.maxRequests,
+      dailyLimit: RATE_LIMITS.dailyLimit
+    }
+  };
+});
+
+// Rate limit status endpoint for debugging
+fastify.get('/rate-limit-status/:userId?', async (request, reply) => {
+  const userId = request.params.userId || 'anonymous';
+  const userData = rateLimitStore.get(userId);
+  
+  if (!userData) {
+    return {
+      userId,
+      status: 'No rate limit data',
+      limits: RATE_LIMITS
+    };
+  }
+  
+  const now = Date.now();
+  const windowTimeLeft = Math.max(0, (userData.windowStart + RATE_LIMITS.windowMs - now) / 1000);
+  const dailyTimeLeft = Math.max(0, (userData.dailyStart + 24*60*60*1000 - now) / 1000);
+  
+  return {
+    userId,
+    currentWindow: {
+      requests: userData.requests,
+      maxRequests: RATE_LIMITS.maxRequests,
+      timeLeftSeconds: Math.ceil(windowTimeLeft)
+    },
+    daily: {
+      requests: userData.dailyRequests,
+      maxRequests: RATE_LIMITS.dailyLimit,
+      cost: userData.dailyCost,
+      maxCost: RATE_LIMITS.dailyCostLimit,
+      timeLeftSeconds: Math.ceil(dailyTimeLeft)
+    },
+    limits: RATE_LIMITS
   };
 });
 
@@ -41,12 +190,24 @@ fastify.post('/ai/chat', async (request, reply) => {
       return reply.code(400).send({ error: 'Request body is required' });
     }
     
-    const { message, conversationHistory = [], topic } = request.body;
+    const { message, conversationHistory = [], topic, userId } = request.body;
     
     // Input validation first
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
       return reply.code(400).send({ 
         error: 'Message is required and must be a non-empty string' 
+      });
+    }
+    
+    // Rate limiting check
+    const rateLimitResult = checkRateLimit(userId);
+    if (!rateLimitResult.allowed) {
+      const statusCode = rateLimitResult.rateLimitExceeded ? 429 : 402;
+      return reply.code(statusCode).send({
+        error: rateLimitResult.error,
+        rateLimitExceeded: rateLimitResult.rateLimitExceeded,
+        dailyLimitExceeded: rateLimitResult.dailyLimitExceeded,
+        retryAfter: rateLimitResult.retryAfter
       });
     }
     
@@ -329,10 +490,10 @@ Use this structure when the user asks questions like 'Do I need God?', 'What is 
   - **Bold the entire point title**, e.g., **1. Obedience:**
   - Each point must be 2–4 sentences long
   - Include a relevant Bible verse with the **full text of the verse quoted directly** inside the paragraph
-  - DO NOT include the verse reference at the end of the paragraph
-  - Style the verse reference in bold and navy, like this: John 14:15
-  - DO NOT use markdown asterisks (**John 14:15**) — only render as styled bold navy
-  - Never show just the reference alone; always include the full verse content inside the same paragraph
+  - When referencing a Bible verse, write it like this EXACT format: "As Jesus reminds us in John 14:15, 'If you love me, keep my commands.' This shows us that..."
+  - The verse reference (John 14:15) should appear in bold navy styling within the sentence
+  - After you write the verse reference and quote, continue with your explanation - DO NOT repeat the reference
+  - ABSOLUTELY FORBIDDEN: Adding (John 14:15) or any verse reference at the end of the paragraph
   - Do not use quote blocks, sub-points, or stylized breaks
 
 - End with a closing paragraph:
@@ -354,8 +515,11 @@ Use this format only when the user asks for a prayer:
 
 - Then provide a full paragraph-style prayer with these characteristics:
   - Prayer starts with "Dear Heavenly Father," or similar reverent address
-  - May include 1 relevant Bible verse, embedded naturally into the prayer
-  - The verse reference must be styled in **bold and navy**, and should be accompanied by the full verse text
+  - May include 1 relevant Bible verse, embedded naturally into the prayer text
+  - When including a verse, write it like this EXACT format: "As you promise in Psalm 23:4, 'Even though I walk through the darkest valley, I will fear no evil, for you are with me.' Help me to..."
+  - The verse reference (Psalm 23:4) should appear in bold navy styling within the sentence
+  - After writing the verse reference and quote, continue the prayer - DO NOT repeat the reference
+  - ABSOLUTELY FORBIDDEN: Adding (Psalm 23:4) or any verse reference at the end
   - Do not use bullet points, numbers, or broken-up formatting
   - Prayer should flow gently in 2–5 paragraphs
   - End with: "In Jesus' name, I pray. Amen."
@@ -369,7 +533,19 @@ Always determine the correct format based on whether the user is:
 - Asking a biblical question or seeking devotional understanding → Use Format 1 (devotional layout)
 - Asking for a prayer → Use Format 2 (prayer layout)
 
-Never mix the two formats. Keep responses scriptural, encouraging, and devotional in tone. Always reflect Christ's love, truth, and peace in your answers.`;
+Never mix the two formats. Keep responses scriptural, encouraging, and devotional in tone. Always reflect Christ's love, truth, and peace in your answers.
+
+CRITICAL FORMATTING RULE: When you reference a Bible verse, include it ONLY ONCE within the natural flow of your sentence. DO NOT add the verse reference again at the end of the paragraph or sentence. 
+
+EXAMPLE OF CORRECT FORMAT:
+"As Jesus said in John 14:6, 'I am the way and the truth and the life.' This verse shows us..."
+
+EXAMPLE OF FORBIDDEN FORMAT (DO NOT DO THIS):
+"As Jesus said in John 14:6, 'I am the way and the truth and the life.' (John 14:6)."
+
+ABSOLUTELY DO NOT add parenthetical verse references at the end of sentences or paragraphs. The verse reference should appear ONLY ONCE in the middle of the sentence when introducing the quote.
+
+CRITICAL: Do not use parentheses around verse references like (John 3:16). Do not add verse references at the end of paragraphs. Each verse should be referenced exactly once when you introduce the quote, and never repeated.`;
 }
 
 // Topic-specific guidance
@@ -392,42 +568,11 @@ function getTopicGuidance(topic) {
 
 // Parse AI response for structured content
 function parseAIResponse(content) {
-  // Extract verse references - comprehensive matching for all formats and contexts
-  const versePatterns = [
-    // Standard format: "Book Chapter:Verse"
-    /(?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Psalms|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)\s+\d+:\d+(?:-\d+)?/gi,
-    // Parenthetical format: "(Book Chapter:Verse)"
-    /\((?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1 Samuel|2 Samuel|1 Kings|2 Kings|1 Chronicles|2 Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Psalms|Proverbs|Ecclesiastes|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)\s+\d+:\d+(?:-\d+)?\)/gi
-  ];
-  
-  let allMatches = [];
-  versePatterns.forEach(pattern => {
-    const matches = content.match(pattern) || [];
-    allMatches = allMatches.concat(matches);
-  });
-  
-  const verseReferences = allMatches.map(match => {
-    // Clean up parentheses if present
-    const cleanMatch = match.replace(/[()]/g, '');
-    const parts = cleanMatch.split(/\s+/);
-    if (parts.length >= 2) {
-      const verseRef = parts[parts.length - 1];
-      const book = parts.slice(0, -1).join(' ');
-      if (verseRef.includes(':')) {
-        return { book, reference: verseRef, fullReference: cleanMatch };
-      }
-    }
-    return null;
-  }).filter(Boolean);
-  
-  // Remove duplicates
-  const uniqueVerses = verseReferences.filter((verse, index, self) => 
-    index === self.findIndex(v => v.fullReference === verse.fullReference)
-  );
-
+  // Since verse references are now embedded within the text content as styled navy blue text,
+  // we no longer need to extract them separately to avoid duplication
   return {
     content: content.trim(),
-    verseReferences: uniqueVerses,
+    verseReferences: [], // Always empty since verses are embedded in content
     contentType: 'spiritual_guidance',
     formattedAt: new Date().toISOString()
   };
