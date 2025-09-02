@@ -334,6 +334,14 @@ fastify.post('/ai/chat', async (request, reply) => {
       });
     }
     
+    // Validate API key format
+    if (!openaiApiKey.startsWith('sk-')) {
+      fastify.log.error('Invalid OpenAI API key format');
+      return reply.code(500).send({ 
+        error: 'AI service misconfigured' 
+      });
+    }
+    
     fastify.log.info(`🚀 AI Request: "${message.substring(0, 50)}..."`);
     
     // Prepare conversation history for better context (keep recent messages)
