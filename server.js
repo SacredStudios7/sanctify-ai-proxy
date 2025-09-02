@@ -319,9 +319,9 @@ fastify.post('/ai/chat', async (request, reply) => {
       finalTopic = 'conversational';
     }
     
-    if (message.length > 2000) {
+    if (message.length > 1500) {
       return reply.code(400).send({ 
-        error: 'Message too long (max 2000 characters)' 
+        error: 'Message too long (max 1500 characters)' 
       });
     }
     
