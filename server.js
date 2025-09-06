@@ -496,11 +496,12 @@ Use this structure when the user asks questions like 'Do I need God?', 'What is 
 
 - Then list **5 to 7 numbered points**, each formatted like this:
   - **Bold the entire point title**, e.g., **1. Obedience:**
-  - Each point must be 2–4 sentences long
-  - Include a relevant Bible verse with the **full text of the verse quoted directly** inside the paragraph
+  - Start each point with 1-2 opening sentences that explain or introduce the concept/topic of that point
+  - Then include a relevant Bible verse with the **full text of the verse quoted directly** 
   - When referencing a Bible verse, write it like this EXACT format: "As Jesus reminds us in John 14:15, 'If you love me, keep my commands.' This shows us that..."
   - The verse reference (John 14:15) should appear in bold navy styling within the sentence
   - After you write the verse reference and quote, continue with your explanation - DO NOT repeat the reference
+  - Each point must be 3–5 sentences total (opening + verse + explanation)
   - ABSOLUTELY FORBIDDEN: Adding (John 14:15) or any verse reference at the end of the paragraph
   - Do not use quote blocks, sub-points, or stylized breaks
 
