@@ -355,11 +355,11 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     fastify.log.info(`📚 Using conversation history: ${conversationLength} total messages, keeping ${recentHistory.length} recent messages for context`);
     
-    // System prompt reinforcement: Re-inject system prompt every 6-8 messages to maintain formatting adherence
-    const shouldReinforcePrompt = conversationLength >= 6 && (conversationLength % 6 === 0 || conversationLength % 7 === 0 || conversationLength % 8 === 0);
+    // System prompt reinforcement: Re-inject system prompt every 3 messages to maintain formatting adherence
+    const shouldReinforcePrompt = conversationLength >= 3 && (conversationLength % 3 === 0);
     
     if (shouldReinforcePrompt) {
-      fastify.log.info(`🔄 REINFORCING SYSTEM PROMPT: Conversation length ${conversationLength} - re-injecting formatting rules`);
+      fastify.log.info(`🔄 REINFORCING SYSTEM PROMPT: Conversation length ${conversationLength} - re-injecting formatting rules every 3 messages`);
     }
     
     // Build spiritual guidance system prompt
