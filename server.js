@@ -362,29 +362,41 @@ fastify.post('/ai/chat', async (request, reply) => {
       fastify.log.info(`🔄 REINFORCING SYSTEM PROMPT: Conversation length ${conversationLength} - re-injecting formatting rules every 3 messages`);
     }
     
-    // Build spiritual guidance system prompt
+    // Build spiritual guidance system prompt with explicit format reminder
     const systemPrompt = buildSpiritualPrompt(finalTopic);
+    
+    // Add explicit format reminder based on detected topic to reduce confusion
+    let formatReminder = '';
+    if (finalTopic === 'prayer') {
+      formatReminder = `\n\nCRITICAL REMINDER: The user is asking for a PRAYER. Use ONLY the prayer format (Format 2). DO NOT use numbered points. DO NOT use the devotional format. Provide a flowing paragraph-style prayer that ends with "In Jesus' name, I pray. Amen."`;
+    } else {
+      formatReminder = `\n\nCRITICAL REMINDER: The user is asking a QUESTION or seeking guidance. Use ONLY the devotional format (Format 1) with 5-7 numbered points. DO NOT use the prayer format. Each point must include a Bible verse with full text.`;
+    }
+    
+    const enhancedSystemPrompt = systemPrompt + formatReminder;
     
     let messages;
     if (shouldReinforcePrompt && recentHistory.length > 0) {
       // Insert system prompt reinforcement in the middle of recent history to maintain context
       const midPoint = Math.floor(recentHistory.length / 2);
       messages = [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: enhancedSystemPrompt },
         ...recentHistory.slice(0, midPoint),
-        { role: 'system', content: systemPrompt }, // Reinforcement injection
+        { role: 'system', content: enhancedSystemPrompt }, // Reinforcement injection
         ...recentHistory.slice(midPoint),
         { role: 'user', content: message }
       ];
-      fastify.log.info(`🔄 Injected system prompt reinforcement at position ${midPoint + 1} of ${recentHistory.length} history messages`);
+      fastify.log.info(`🔄 Injected enhanced system prompt reinforcement (${finalTopic} format) at position ${midPoint + 1} of ${recentHistory.length} history messages`);
     } else {
       // Standard format with single system prompt
       messages = [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: enhancedSystemPrompt },
         ...recentHistory,
         { role: 'user', content: message }
       ];
     }
+    
+    fastify.log.info(`📋 Using ${finalTopic} format with explicit reminder: ${formatReminder.substring(0, 100)}...`);
     
     fastify.log.info(`🚀 Calling OpenAI with ${messages.length} messages`);
     
