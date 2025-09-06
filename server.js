@@ -355,14 +355,36 @@ fastify.post('/ai/chat', async (request, reply) => {
     
     fastify.log.info(`📚 Using conversation history: ${conversationLength} total messages, keeping ${recentHistory.length} recent messages for context`);
     
+    // System prompt reinforcement: Re-inject system prompt every 6-8 messages to maintain formatting adherence
+    const shouldReinforcePrompt = conversationLength >= 6 && (conversationLength % 6 === 0 || conversationLength % 7 === 0 || conversationLength % 8 === 0);
+    
+    if (shouldReinforcePrompt) {
+      fastify.log.info(`🔄 REINFORCING SYSTEM PROMPT: Conversation length ${conversationLength} - re-injecting formatting rules`);
+    }
+    
     // Build spiritual guidance system prompt
     const systemPrompt = buildSpiritualPrompt(finalTopic);
     
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      ...recentHistory,
-      { role: 'user', content: message }
-    ];
+    let messages;
+    if (shouldReinforcePrompt && recentHistory.length > 0) {
+      // Insert system prompt reinforcement in the middle of recent history to maintain context
+      const midPoint = Math.floor(recentHistory.length / 2);
+      messages = [
+        { role: 'system', content: systemPrompt },
+        ...recentHistory.slice(0, midPoint),
+        { role: 'system', content: systemPrompt }, // Reinforcement injection
+        ...recentHistory.slice(midPoint),
+        { role: 'user', content: message }
+      ];
+      fastify.log.info(`🔄 Injected system prompt reinforcement at position ${midPoint + 1} of ${recentHistory.length} history messages`);
+    } else {
+      // Standard format with single system prompt
+      messages = [
+        { role: 'system', content: systemPrompt },
+        ...recentHistory,
+        { role: 'user', content: message }
+      ];
+    }
     
     fastify.log.info(`🚀 Calling OpenAI with ${messages.length} messages`);
     
